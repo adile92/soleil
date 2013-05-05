@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<AnchorPane id="AnchorPane" fx:id="panPrincipal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" styleClass="theme" xmlns:fx="http://javafx.com/fxml" fx:controller="main.Controller">
+  <children>
+    <SplitPane id="splitPaneHorizontal1" dividerPositions="0.25125" focusTraversable="true" prefHeight="535.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0">
+      <items>
+        <AnchorPane id="anchorPane1" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+          <children>
+            <ListView fx:id="list" prefHeight="535.0" prefWidth="198.0" styleClass="darkList" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+          </children>
+        </AnchorPane>
+        <AnchorPane id="anchorPane2" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+          <children>
+            <SplitPane id="splitPaneVertical1" fx:id="splitPan" focusTraversable="true" orientation="VERTICAL" prefHeight="598.0" prefWidth="595.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <items>
+                <AnchorPane id="anchorPane3" fx:id="panMessageDigest" minHeight="0.0" minWidth="0.0" prefHeight="535.0" prefWidth="463.0">
+                  <children>
+                    <Label layoutX="14.0" layoutY="14.0" text="Empreinte :" />
+                    <Button fx:id="fileChooser" layoutX="305.0" layoutY="54.0" mnemonicParsing="false" onAction="#newMdFileChooser" text="Choisir un fichier" />
+                    <Label layoutX="14.0" layoutY="129.0" text="Fichier de sortie :" />
+                    <TextArea fx:id="empreinteArea" layoutX="14.0" layoutY="203.0" prefHeight="296.0" prefWidth="568.0" wrapText="true" />
+                    <Label fx:id="fichierSortie" alignment="TOP_LEFT" layoutX="119.0" layoutY="129.0" prefHeight="27.0" prefWidth="463.0" text="..." />
+                    <ChoiceBox fx:id="algoList" layoutX="119.0" layoutY="55.0">
+                      <items>
+                        <FXCollections fx:factory="observableArrayList">
+                          <String fx:value="Item 1" />
+                          <String fx:value="Item 2" />
+                          <String fx:value="Item 3" />
+                        </FXCollections>
+                      </items>
+                    </ChoiceBox>
+                    <Label layoutX="14.0" layoutY="58.0" text="Algorithme :" />
+                    <ProgressBar fx:id="progress" layoutX="105.0" layoutY="18.0" prefWidth="200.0" progress="0.0" />
+                  </children>
+                </AnchorPane>
+              </items>
+            </SplitPane>
+          </children>
+        </AnchorPane>
+      </items>
+    </SplitPane>
+    <ImageView id="IssueTrackingLite" layoutX="14.0" layoutY="20.0">
+      <image>
+        <Image url="@IssueTrackingLite.png" preserveRatio="true" smooth="true" />
+      </image>
+    </ImageView>
+  </children>
+  <stylesheets>
+    <URL value="@IssueTrackingLite.css" />
+  </stylesheets>
+</AnchorPane>
