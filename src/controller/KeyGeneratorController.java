@@ -33,8 +33,14 @@ package controller;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.beans.value.ChangeListener;
@@ -52,7 +58,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
+
+import javax.crypto.SecretKey;
+
+import key.factory.KeyFactory;
 import key.generator.TypeCle;
 import main.ProviderService;
 
@@ -71,13 +82,28 @@ public class KeyGeneratorController implements Initializable {
 	Label fichierSortie;
 
 	@FXML
-	ChoiceBox<String> typeCle;
+	ChoiceBox<TypeCle> typeCle;
 
 	@FXML
 	ChoiceBox<String> algoList;
 
 	@FXML
 	ProgressBar progress;
+
+	@FXML
+	ChoiceBox<KeyFactory> factoryList;
+
+	@FXML
+	TextField paddingSize;
+
+	@FXML
+	TextField keySize;
+
+	@FXML
+	TextField paddingValue;
+
+	@FXML
+	TextField password;
 
 	/**
 	 * Initializes the controller class.
@@ -89,33 +115,40 @@ public class KeyGeneratorController implements Initializable {
 
 		System.out.println(this.getClass().getSimpleName() + ".initialize");
 
-	
-		typeCle.setItems(FXCollections.observableArrayList(ProviderService
-				.typeCles()));
+		typeCle.setItems(FXCollections.observableArrayList(TypeCle.values()));
 		typeCle.getSelectionModel().select(0);
-		
+
 		algoList.setItems(FXCollections.observableArrayList(ProviderService
 				.cleAlgoGenerationSymetrique()));
 		// on set le 1er de la list comme valeur par defaut
 		algoList.getSelectionModel().select(0);
 
-		
+		factoryList.setItems(FXCollections.observableArrayList(KeyFactory
+				.values()));
+		// on set le 1er de la list comme valeur par defaut
+		factoryList.getSelectionModel().select(0);
+
+		List<Integer> size = new ArrayList<Integer>();
+		for (int i = 1; i <= 32; i++) {
+			size.add(i);
+		}
 
 		typeCle.getSelectionModel().selectedItemProperty()
-				.addListener(new ChangeListener<String>() {
+				.addListener(new ChangeListener<TypeCle>() {
 					@Override
 					public void changed(
-							ObservableValue<? extends String> selected,
-							String oldFruit, String newFruit) {
-						if (selected.getValue().equals(
-								TypeCle.Symetrique.name())) {
-							algoList.setItems(FXCollections.observableArrayList(ProviderService
-									.cleAlgoGenerationSymetrique()));
+							ObservableValue<? extends TypeCle> selected,
+							TypeCle oldFruit, TypeCle newFruit) {
+						if (selected.getValue().equals(TypeCle.Symetrique)) {
+							algoList.setItems(FXCollections
+									.observableArrayList(ProviderService
+											.cleAlgoGenerationSymetrique()));
 							algoList.getSelectionModel().select(0);
 						} else if (selected.getValue().equals(
-								TypeCle.Assymetrique.name())) {
-							algoList.setItems(FXCollections.observableArrayList(ProviderService
-									.cleAlgoGenerationAssymetrique()));
+								TypeCle.Assymetrique)) {
+							algoList.setItems(FXCollections
+									.observableArrayList(ProviderService
+											.cleAlgoGenerationAssymetrique()));
 							algoList.getSelectionModel().select(0);
 						} else {
 							try {
@@ -143,7 +176,44 @@ public class KeyGeneratorController implements Initializable {
 				});
 	}
 
-	@SuppressWarnings("unchecked")
+	public void generateKey(ActionEvent event) throws IOException {
+		System.out.println("toto");
+
+		String algo = this.algoList.getSelectionModel().getSelectedItem();
+		KeyFactory factory = this.factoryList.getSelectionModel()
+				.getSelectedItem();
+		Integer keySize = (this.keySize.getText() == null || this.keySize
+				.getText().isEmpty()) ? null : Integer.parseInt(this.keySize
+				.getText());
+		String password = this.password.getText();
+		String paddingValue = this.paddingValue.getText();
+		Integer paddingSize = (this.paddingSize.getText() == null || this.paddingSize
+				.getText().isEmpty()) ? null : Integer
+				.parseInt(this.paddingSize.getText());
+
+		SecretKey key = ProviderService.getSecretKey(algo, factory, keySize,
+				password, paddingValue, paddingSize);
+		if (key != null) {
+			ObjectOutputStream oos = new ObjectOutputStream(
+					new FileOutputStream(new File(key.getAlgorithm()
+							+ "_SecretKey.txt")));
+			oos.writeObject(key);
+			oos.close();
+			System.out.println(new String(key.getEncoded()));
+//			 SecureRandom keyGenRand = null;
+//			 try {
+//			 keyGenRand = SecureRandom.getInstance("SHA1PRNG");
+//			 } catch (NoSuchAlgorithmException e) {
+//			 e.printStackTrace();
+//			 }
+//			 keyGenRand.setSeed(key.getEncoded());
+//
+//			System.out.println(new String(key.getEncoded()));
+		} else {
+			System.out.println("clé null");
+		}
+	}
+
 	public void newMdFileChooser(ActionEvent event) throws IOException {
 
 		FileChooser fileChooser = new FileChooser();
@@ -152,8 +222,6 @@ public class KeyGeneratorController implements Initializable {
 		file = fileChooser.showOpenDialog(null);
 
 		if (file != null) {
-
-			new ProviderService();
 
 			String algo = algoList.getSelectionModel().getSelectedItem();
 			final String cheminEmpreinte = file.getParent() + "/"
@@ -172,7 +240,6 @@ public class KeyGeneratorController implements Initializable {
 
 				@Override
 				public void handle(Event event) {
-					// TODO Auto-generated method stub
 
 					FileInputStream empreinteStream;
 					try {
