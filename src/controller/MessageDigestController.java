@@ -104,7 +104,6 @@ public class MessageDigestController implements Initializable {
 		
 		if (file != null) {
 			
-			new ProviderService();
 						
 			String algo = algoList.getSelectionModel().getSelectedItem();
 			final String cheminEmpreinte = file.getParent() + "/" + "empreinte.txt";

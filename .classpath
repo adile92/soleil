@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="at.bestsolution.efxclipse.tooling.jdt.core.JAVAFX_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SecurityProvider"/>
+	<classpathentry kind="lib" path="jfxrt.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/lune"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

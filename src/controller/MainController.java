@@ -173,8 +173,9 @@ public class MainController implements Initializable {
 			AnchorPane page = null;
 			
 			switch (name) {
-				case "Message Digest": page = (AnchorPane) FXMLLoader.load(App.class.getResource("messageDigest.fxml"));
-			}
+			case "Message Digest": page = (AnchorPane) FXMLLoader.load(App.class.getResource("messageDigest.fxml"));
+			case "Key Generator": page = (AnchorPane) FXMLLoader.load(App.class.getResource("keyGenerator.fxml"));
+		}
 			
 			if(page != null)
 				splitPane.getItems().add(page);
