@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="535.0" prefWidth="463.0" styleClass="theme" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.MessageDigestController">
+<AnchorPane id="AnchorPaneMD" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="535.0" prefWidth="600.0" styleClass="theme" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.MessageDigestController">
   <children>
     <AnchorPane id="anchorPane3" fx:id="panMessageDigest" minHeight="0.0" minWidth="0.0" prefHeight="535.0" prefWidth="463.0">
       <children>
@@ -17,7 +17,7 @@
         <Button fx:id="fileChooser" layoutX="305.0" layoutY="54.0" mnemonicParsing="false" onAction="#newMdFileChooser" text="Choisir un fichier" />
         <Label layoutX="14.0" layoutY="129.0" text="Fichier de sortie :" />
         <TextArea fx:id="empreinteArea" layoutX="14.0" layoutY="203.0" prefHeight="296.0" prefWidth="403.0" wrapText="true" />
-        <Label fx:id="fichierSortie" alignment="TOP_LEFT" layoutX="119.0" layoutY="129.0" prefHeight="27.0" prefWidth="463.0" text="..." />
+        <Label fx:id="fichierSortie" alignment="TOP_LEFT" layoutX="119.0" layoutY="129.0" prefHeight="27.0" prefWidth="330.0" text="..." />
         <ChoiceBox fx:id="algoList" layoutX="119.0" layoutY="55.0">
           <items>
             <FXCollections fx:factory="observableArrayList">
@@ -28,7 +28,7 @@
           </items>
         </ChoiceBox>
         <Label layoutX="14.0" layoutY="58.0" text="Algorithme :" />
-        <ProgressBar id="test" fx:id="progress" layoutX="105.0" layoutY="18.0" prefWidth="200.0" progress="0.0" />
+        <ProgressBar id="progress" fx:id="progress" layoutX="105.0" layoutY="18.0" prefWidth="200.0" progress="0.0" />
       </children>
     </AnchorPane>
   </children>

@@ -53,8 +53,8 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
+import key.generator.TypeCle;
 import main.ProviderService;
-import main.TypeCle;
 
 public class KeyGeneratorController implements Initializable {
 
@@ -62,7 +62,7 @@ public class KeyGeneratorController implements Initializable {
 	SplitPane splitPane;
 
 	@FXML
-	Button fileChooser;
+	Button generateKey;
 
 	@FXML
 	TextArea empreinteArea;
@@ -89,14 +89,17 @@ public class KeyGeneratorController implements Initializable {
 
 		System.out.println(this.getClass().getSimpleName() + ".initialize");
 
-		algoList.setItems(FXCollections.observableArrayList(ProviderService
-				.cleAlgoGeneration()));
-		// on set le 1er de la list comme valeur par defaut
-		algoList.getSelectionModel().select(0);
-
+	
 		typeCle.setItems(FXCollections.observableArrayList(ProviderService
 				.typeCles()));
 		typeCle.getSelectionModel().select(0);
+		
+		algoList.setItems(FXCollections.observableArrayList(ProviderService
+				.cleAlgoGenerationSymetrique()));
+		// on set le 1er de la list comme valeur par defaut
+		algoList.getSelectionModel().select(0);
+
+		
 
 		typeCle.getSelectionModel().selectedItemProperty()
 				.addListener(new ChangeListener<String>() {
@@ -106,10 +109,14 @@ public class KeyGeneratorController implements Initializable {
 							String oldFruit, String newFruit) {
 						if (selected.getValue().equals(
 								TypeCle.Symetrique.name())) {
-							// maj combo algolist
+							algoList.setItems(FXCollections.observableArrayList(ProviderService
+									.cleAlgoGenerationSymetrique()));
+							algoList.getSelectionModel().select(0);
 						} else if (selected.getValue().equals(
 								TypeCle.Assymetrique.name())) {
-							// maj combo algolist
+							algoList.setItems(FXCollections.observableArrayList(ProviderService
+									.cleAlgoGenerationAssymetrique()));
+							algoList.getSelectionModel().select(0);
 						} else {
 							try {
 								throw new Exception("Type de clé inexistant.");

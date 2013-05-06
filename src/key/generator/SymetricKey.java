@@ -1,4 +1,4 @@
-package main;
+package key.generator;
 
 public enum SymetricKey {
 

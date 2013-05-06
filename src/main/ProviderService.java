@@ -8,13 +8,12 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javafx.concurrent.Task;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-
+import key.generator.AssymetricKey;
+import key.generator.SymetricKey;
+import key.generator.TypeCle;
 import edu.esiag.isidis.security.provider.MyProvider;
 
 public class ProviderService {
@@ -44,10 +43,21 @@ public class ProviderService {
 
 	}
 
-	public static String[] cleAlgoGeneration() {
+	public static String[] cleAlgoGenerationSymetrique() {
 
 		List<String> list = new ArrayList<>();
 		for (SymetricKey cle : SymetricKey.values()) {
+			list.add(cle.name());
+		}
+
+		return list.toArray(new String[list.size()]);
+
+	}
+	
+	public static String[] cleAlgoGenerationAssymetrique() {
+
+		List<String> list = new ArrayList<>();
+		for (AssymetricKey cle :AssymetricKey.values()) {
 			list.add(cle.name());
 		}
 

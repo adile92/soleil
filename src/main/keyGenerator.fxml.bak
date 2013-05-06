@@ -29,7 +29,7 @@
         </ChoiceBox>
         <Label layoutX="14.0" layoutY="91.0" text="Algorithme :" />
         <ProgressBar fx:id="progress" layoutX="132.0" layoutY="18.0" prefWidth="200.0" progress="0.0" />
-        <ChoiceBox id="typeCle" fx:id="typeKey" layoutX="104.0" layoutY="56.0" prefWidth="105.0">
+        <ChoiceBox fx:id="typeCle" layoutX="104.0" layoutY="56.0" prefWidth="105.0">
           <items>
             <FXCollections fx:factory="observableArrayList">
               <String fx:value="Item 1" />
