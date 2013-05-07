@@ -37,11 +37,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -79,6 +79,9 @@ public class KeyGeneratorController implements Initializable {
 	TextArea empreinteArea;
 
 	@FXML
+	TextArea console;
+
+	@FXML
 	Label fichierSortie;
 
 	@FXML
@@ -105,6 +108,27 @@ public class KeyGeneratorController implements Initializable {
 	@FXML
 	TextField password;
 
+	@FXML
+	TextField nbBits;
+
+	@FXML
+	Label factory;
+
+	@FXML
+	Label passwordLb;
+
+	@FXML
+	Label padding;
+
+	@FXML
+	Label paddingSizeLb;
+
+	@FXML
+	Label nbBitsLb;
+
+	@FXML
+	Label keySizeLb;
+
 	/**
 	 * Initializes the controller class.
 	 */
@@ -128,11 +152,8 @@ public class KeyGeneratorController implements Initializable {
 		// on set le 1er de la list comme valeur par defaut
 		factoryList.getSelectionModel().select(0);
 
-		List<Integer> size = new ArrayList<Integer>();
-		for (int i = 1; i <= 32; i++) {
-			size.add(i);
-		}
-
+		nbBitsLb.setVisible(false);
+		nbBits.setVisible(false);
 		typeCle.getSelectionModel().selectedItemProperty()
 				.addListener(new ChangeListener<TypeCle>() {
 					@Override
@@ -144,17 +165,44 @@ public class KeyGeneratorController implements Initializable {
 									.observableArrayList(ProviderService
 											.cleAlgoGenerationSymetrique()));
 							algoList.getSelectionModel().select(0);
+
+							factoryList.setVisible(true);
+							password.setVisible(true);
+							paddingValue.setVisible(true);
+							factory.setVisible(true);
+							passwordLb.setVisible(true);
+							padding.setVisible(true);
+							paddingSizeLb.setVisible(true);
+							paddingSize.setVisible(true);
+							keySize.setVisible(true);
+							keySizeLb.setVisible(true);
+
+							nbBitsLb.setVisible(false);
+							nbBits.setVisible(false);
 						} else if (selected.getValue().equals(
 								TypeCle.Assymetrique)) {
 							algoList.setItems(FXCollections
 									.observableArrayList(ProviderService
 											.cleAlgoGenerationAssymetrique()));
 							algoList.getSelectionModel().select(0);
+
+							factoryList.setVisible(false);
+							password.setVisible(false);
+							paddingValue.setVisible(false);
+							factory.setVisible(false);
+							passwordLb.setVisible(false);
+							padding.setVisible(false);
+							paddingSizeLb.setVisible(false);
+							paddingSize.setVisible(false);
+							keySize.setVisible(false);
+							keySizeLb.setVisible(false);
+							nbBitsLb.setVisible(true);
+							nbBits.setVisible(true);
+
 						} else {
 							try {
 								throw new Exception("Type de clé inexistant.");
 							} catch (Exception e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
@@ -176,41 +224,129 @@ public class KeyGeneratorController implements Initializable {
 				});
 	}
 
-	public void generateKey(ActionEvent event) throws IOException {
-		System.out.println("toto");
+	public Object generateKey(ActionEvent event) throws IOException {
 
-		String algo = this.algoList.getSelectionModel().getSelectedItem();
-		KeyFactory factory = this.factoryList.getSelectionModel()
-				.getSelectedItem();
-		Integer keySize = (this.keySize.getText() == null || this.keySize
-				.getText().isEmpty()) ? null : Integer.parseInt(this.keySize
-				.getText());
-		String password = this.password.getText();
-		String paddingValue = this.paddingValue.getText();
-		Integer paddingSize = (this.paddingSize.getText() == null || this.paddingSize
-				.getText().isEmpty()) ? null : Integer
-				.parseInt(this.paddingSize.getText());
+		Task task = new Task<Object>() {
 
-		SecretKey key = ProviderService.getSecretKey(algo, factory, keySize,
-				password, paddingValue, paddingSize);
-		if (key != null) {
-			ObjectOutputStream oos = new ObjectOutputStream(
-					new FileOutputStream(new File(key.getAlgorithm()
-							+ "_SecretKey.txt")));
-			oos.writeObject(key);
-			oos.close();
-			System.out.println(new String(key.getEncoded()));
-//			 SecureRandom keyGenRand = null;
-//			 try {
-//			 keyGenRand = SecureRandom.getInstance("SHA1PRNG");
-//			 } catch (NoSuchAlgorithmException e) {
-//			 e.printStackTrace();
-//			 }
-//			 keyGenRand.setSeed(key.getEncoded());
-//
-//			System.out.println(new String(key.getEncoded()));
-		} else {
-			System.out.println("clé null");
+			@Override
+			protected Object call() throws Exception {
+				switch (typeCle.getSelectionModel().getSelectedItem()) {
+				case Symetrique:
+					executeSecretKey();
+					break;
+				case Assymetrique:
+					executeKeyPair();
+					break;
+				default:
+					break;
+				}
+				return true;
+			}
+		};
+		fichierSortie.setText("En cours ...");
+		new Thread(task).start();
+
+		task.setOnSucceeded(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event arg0) {
+
+				console.setText(console.getText() + "\n"
+						+ "Execution complete.");
+
+			}
+
+		});
+		return true;
+
+	}
+
+	private void executeKeyPair() {
+		try {
+			String algo = this.algoList.getSelectionModel().getSelectedItem();
+
+			Integer nbBits = (this.nbBits.getText() == null || this.nbBits
+					.getText().isEmpty()) ? null : Integer.parseInt(this.nbBits
+					.getText());
+
+			KeyPair keyPair = ProviderService.getKeyPair(algo, nbBits);
+			if (keyPair != null) {
+
+				PrivateKey privKey = keyPair.getPrivate();
+				PublicKey pubKey = keyPair.getPublic();
+
+				// Store the keys
+				byte[] pkey = pubKey.getEncoded();
+				File file = new File(algo + "_publicKey.txt");
+				FileOutputStream keyfos = new FileOutputStream(file);
+				String pathPublicKey = file.getPath();
+				keyfos.write(pkey);
+				keyfos.close();
+
+				pkey = privKey.getEncoded();
+				file = new File(algo + "_privateKey.txt");
+				keyfos = new FileOutputStream(file);
+				String pathPrivateKey = file.getPath();
+				keyfos.write(pkey);
+				keyfos.close();
+
+				this.empreinteArea.setText("Private key : "
+						+ new String(privKey.getEncoded()) + "\n"
+						+ "Public key : " + new String(pubKey.getEncoded()));
+				this.fichierSortie.setText("Private key : " + pathPrivateKey
+						+ "\n" + "Public key : " + pathPublicKey);
+			} else {
+				this.console
+						.setText("Error to generate key pair : KeyPair instance is null");
+
+			}
+		} catch (Exception e) {
+			this.console.setText(e.getMessage());
+		}
+
+	}
+
+	private void executeSecretKey() throws IOException {
+		try {
+			String algo = this.algoList.getSelectionModel().getSelectedItem();
+			KeyFactory factory = this.factoryList.getSelectionModel()
+					.getSelectedItem();
+			Integer keySize = (this.keySize.getText() == null || this.keySize
+					.getText().isEmpty()) ? null : Integer
+					.parseInt(this.keySize.getText());
+			String password = this.password.getText();
+			String paddingValue = this.paddingValue.getText();
+			Integer paddingSize = (this.paddingSize.getText() == null || this.paddingSize
+					.getText().isEmpty()) ? null : Integer
+					.parseInt(this.paddingSize.getText());
+
+			SecretKey key = ProviderService.getSecretKey(algo, factory,
+					keySize, password, paddingValue, paddingSize);
+			if (key != null) {
+				File file = new File(key.getAlgorithm() + "_SecretKey.txt");
+				ObjectOutputStream oos = new ObjectOutputStream(
+						new FileOutputStream(file));
+				oos.writeObject(key);
+				oos.close();
+				this.fichierSortie.setText(file.getPath());
+
+				this.empreinteArea.setText("Secret key : "
+						+ new String(key.getEncoded()));
+				// SecureRandom keyGenRand = null;
+				// try {
+				// keyGenRand = SecureRandom.getInstance("SHA1PRNG");
+				// } catch (NoSuchAlgorithmException e) {
+				// e.printStackTrace();
+				// }
+				// keyGenRand.setSeed(key.getEncoded());
+				//
+				// System.out.println(new String(key.getEncoded()));
+			} else {
+				this.console
+						.setText("Error to generate secret key : SecretKey instance is null");
+			}
+		} catch (Exception e) {
+			this.console.setText(e.getMessage());
 		}
 	}
 

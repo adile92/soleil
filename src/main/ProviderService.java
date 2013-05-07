@@ -6,8 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
@@ -32,7 +35,7 @@ import edu.esiag.isidis.security.provider.MyProvider;
 public class ProviderService {
 
 	private static final MyProvider provider = new MyProvider();
-	static final int ITERATION_COUNT = 8192;
+	private static final int ITERATION_COUNT = 8192;
 
 	/**
 	 * retourne la liste des algo dispo
@@ -40,14 +43,12 @@ public class ProviderService {
 	 * @return
 	 */
 	public static String[] algo() {
-
 		List<String> list = new ArrayList<>();
 		list.add("MD5");
 		list.add("SHA");
 		list.add("SHA-1");
 
 		return list.toArray(new String[list.size()]);
-
 	}
 
 	public static String[] cleAlgoGenerationSymetrique() {
@@ -72,8 +73,8 @@ public class ProviderService {
 
 	}
 
-	public static Task<?> performMessageDigest(final String algo, final File file,
-			final String cheminEmpreinte) {
+	public static Task<?> performMessageDigest(final String algo,
+			final File file, final String cheminEmpreinte) {
 		return new Task<Object>() {
 			@Override
 			protected Object call() throws Exception {
@@ -112,40 +113,32 @@ public class ProviderService {
 		};
 	}
 
-	public static Task<?> performKeyGenerator(final String algo, final File file,
-			final String cheminEmpreinte) {
+	public static Task<?> performKeyGenerator(final String algo,
+			final File file, final String cheminEmpreinte) {
 		return new Task<Object>() {
 			@Override
 			protected Object call() throws Exception {
 				KeyGenerator kg = null;
 				StringBuffer buff = new StringBuffer();
-				try {
-					FileInputStream fis = new FileInputStream(file);
 
-					int tailleContent = fis.available();
+				FileInputStream fis = new FileInputStream(file);
 
-					kg = provider.getKeyGenerator(algo);
+				int tailleContent = fis.available();
 
-					int content;
+				kg = provider.getKeyGenerator(algo);
 
-					while ((content = fis.read()) != -1) {
-						buff.append((char) content);
-						updateProgress(buff.length(), tailleContent);
-					}
-					// kg.
-					// String empreinte = new String(md.digest(buff.toString()
-					// .getBytes()));
-					// FileOutputStream fos = new FileOutputStream(new File(
-					// cheminEmpreinte));
-					// fos.write(empreinte.getBytes());
+				int content;
 
-				} catch (NoSuchAlgorithmException e) {
-					e.printStackTrace();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
+				while ((content = fis.read()) != -1) {
+					buff.append((char) content);
+					updateProgress(buff.length(), tailleContent);
 				}
+				// kg.
+				// String empreinte = new String(md.digest(buff.toString()
+				// .getBytes()));
+				// FileOutputStream fos = new FileOutputStream(new File(
+				// cheminEmpreinte));
+				// fos.write(empreinte.getBytes());
 
 				return true;
 			}
@@ -154,96 +147,89 @@ public class ProviderService {
 
 	public static SecretKey getSecretKey(String algoKeyGenerator,
 			KeyFactory factoryAlgo, Integer keyLenght, String password,
-			String paddingValue, Integer iterationCount) {
+			String paddingValue, Integer iterationCount)
+			throws InvalidKeySpecException, NoSuchAlgorithmException,
+			InvalidKeyException {
 
-		KeyGenerator kg;
+		KeyGenerator kg = null;
 		KeySpec keySpec = null;
 		SecretKey key;
 		SecretKeyFactory skf = null;
-		try {
 
-			byte[] padding = null;
-			if (paddingValue != null && !paddingValue.isEmpty()) {
-				padding = paddingValue.getBytes();
-			} else {
-				SecureRandom saltRand = new SecureRandom(new byte[] { 1, 2, 3,
-						4 });
-				byte[] salt = new byte[16];
-				saltRand.nextBytes(salt);
-				padding = salt;
+		byte[] padding = null;
+		if (paddingValue != null && !paddingValue.isEmpty()) {
+			padding = paddingValue.getBytes();
+		} else {
+			SecureRandom saltRand = new SecureRandom(new byte[] { 1, 2, 3, 4 });
+			byte[] salt = new byte[16];
+			saltRand.nextBytes(salt);
+			padding = salt;
 
-			}
-			if (iterationCount == null) {
-				iterationCount = ITERATION_COUNT;
-			}
-			
-			kg = KeyGenerator.getInstance(algoKeyGenerator);
-
-			
-		
-			Class<?> specCL = null;
-			switch (factoryAlgo) {
-			case DES:
-			case TripleDES:
-				kg.init(new SecureRandom());
-				
-				key = kg.generateKey();
-				skf = SecretKeyFactory.getInstance(factoryAlgo
-						.name());
-				specCL = Class.forName("javax.crypto.spec.DESKeySpec");
-				keySpec = new DESKeySpec(key.getEncoded());
-break;
-			case DESede:
-System.out.println(keyLenght);
-				kg.init(keyLenght,  new SecureRandom());
-				
-				key = kg.generateKey();
-				skf = SecretKeyFactory.getInstance(factoryAlgo
-						.name());
-				specCL = Class.forName("javax.crypto.spec.DESKeySpec");
-				keySpec = new SecretKeySpec(key.getEncoded(), 0, key.getEncoded().length, KeyFactory.DESede.name());
-				
-				
-				break;
-			case PBEWithMD5AndDES:
-			case PBEWithMD5AndTripleDES:
-			case PBEWithSHA1AndDESede:
-			case PBEWithSHA1AndRC2_40:
-			case PBKDF2WithHmacSHA1:
-				
-				skf = SecretKeyFactory.getInstance(factoryAlgo
-						.name());
-				if (keyLenght != null && keyLenght > 0) {
-					keySpec = new PBEKeySpec(password.toCharArray(), padding,
-							iterationCount, keyLenght);
-				} else {
-					skf = SecretKeyFactory.getInstance(factoryAlgo
-							.name());
-					keySpec = new PBEKeySpec(password.toCharArray(), padding,
-							iterationCount);
-				}
-				break;
-			default:
-				break;
-			}
-			if(skf == null){
-				return null;
-			}
-			SecretKey keyTemp = skf.generateSecret(keySpec);
-			SecretKey secret = new SecretKeySpec(keyTemp.getEncoded(),
-					algoKeyGenerator);
-			return secret;
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InvalidKeySpecException e) {
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		return null;
+		if (iterationCount == null) {
+			iterationCount = ITERATION_COUNT;
+		}
+
+		switch (factoryAlgo) {
+		// autre
+
+		case DES:
+		case TripleDES:
+			kg = KeyGenerator.getInstance(factoryAlgo.name());
+			kg.init(new SecureRandom());
+
+			key = kg.generateKey();
+			skf = SecretKeyFactory.getInstance(factoryAlgo.name());
+			keySpec = new DESKeySpec(key.getEncoded());
+			break;
+		case DESede:
+			System.out.println(keyLenght);
+			kg = KeyGenerator.getInstance(factoryAlgo.name());
+			kg.init(keyLenght, new SecureRandom());
+
+			key = kg.generateKey();
+			skf = SecretKeyFactory.getInstance(factoryAlgo.name());
+			keySpec = (DESedeKeySpec) skf.getKeySpec(key, DESedeKeySpec.class);
+
+			break;
+		case PBEWithMD5AndDES:
+		case PBEWithMD5AndTripleDES:
+		case PBEWithSHA1AndDESede:
+		case PBEWithSHA1AndRC2_40:
+		case PBKDF2WithHmacSHA1:
+
+			skf = SecretKeyFactory.getInstance(factoryAlgo.name());
+			if (keyLenght != null && keyLenght > 0) {
+				keySpec = new PBEKeySpec(password.toCharArray(), padding,
+						iterationCount, keyLenght);
+			} else {
+				keySpec = new PBEKeySpec(password.toCharArray(), padding,
+						iterationCount);
+			}
+			break;
+		default:
+			// skf = SecretKeyFactory.getInstance("DES");
+			// return keySpec = new SecretKeySpec(password.getBytes("UTF-8"),
+			// factoryAlgo.name());
+			break;
+		}
+		if (skf == null) {
+			return null;
+		}
+		SecretKey keyTemp = skf.generateSecret(keySpec);
+		SecretKey secret = new SecretKeySpec(keyTemp.getEncoded(),
+				algoKeyGenerator);
+		return secret;
 	}
 
+	public static KeyPair getKeyPair(String keyAlgorithm, int numBits)
+			throws NoSuchAlgorithmException, NoSuchProviderException {
+		// Get the public/private key pair
+
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance(keyAlgorithm);
+		SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+		keyGen.initialize(numBits, random);
+		KeyPair keyPair = keyGen.generateKeyPair();
+		return keyPair;
+	}
 }
