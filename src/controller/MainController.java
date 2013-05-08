@@ -7,6 +7,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.log4j.Logger;
+
+import appender.GuiAppender;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -18,13 +22,18 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import main.App;
 import model.TrackingService;
 import model.TrackingServiceStub;
 
 public class MainController implements Initializable {
-
+	
+	private static Logger logger = Logger.getLogger(App.class);
+	
+	@FXML
+	public static TextArea console;
 	@FXML
 	ListView<String> list;
 
@@ -42,12 +51,17 @@ public class MainController implements Initializable {
 	 */
 	@Override
 	public void initialize(URL url, ResourceBundle rsrcs) {
+		logger.addAppender(new GuiAppender(console));
+		
 		assert list != null : "fx:id=\"list\" was not injected: check your FXML file 'IssueTrackingLite.fxml'.";
-
-		System.out.println(this.getClass().getSimpleName() + ".initialize");
+		
+		logger.info(this.getClass().getSimpleName() + ".initialize");
 
 		connectToService();
-
+		
+		
+		
+		
 		if (list != null) {
 			list.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 			list.getSelectionModel().selectedItemProperty()
@@ -159,30 +173,32 @@ public class MainController implements Initializable {
 
 	public void selectPan(String name, boolean visible) {
 
-		for (int i = 0; i < splitPane.getItems().size(); i++)
-			splitPane.getItems().remove(i);
+//		for (int i = 0; i < splitPane.getItems().size(); i++)
+//			splitPane.getItems().remove(i);
 
 		try {
 			AnchorPane page = null;
 
 			switch (name) {
 			case "Message Digest":
-				page = (AnchorPane) FXMLLoader.load(App.class
-						.getResource("messageDigest.fxml"));
+				page = (AnchorPane) FXMLLoader.load(App.class.getResource("messageDigest.fxml"));
 				System.out.println(name);
 				System.out.println("Message");
 				break;
 			case "Key Generator":
-				page = (AnchorPane) FXMLLoader.load(App.class
-						.getResource("keyGenerator.fxml"));
+				page = (AnchorPane) FXMLLoader.load(App.class.getResource("keyGenerator.fxml"));
 				System.out.println(name);
 				System.out.println("Key");
 				break;
 			}
 
-			if (page != null)
-				splitPane.getItems().add(page);
-
+//			if (page != null)
+//				splitPane.getItems().add(page);
+			if (splitPane.getItems().get(0) != null && page != null) {
+				splitPane.getItems().remove(0);
+				splitPane.getItems().add(0, page);
+			}
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

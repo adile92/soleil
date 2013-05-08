@@ -63,12 +63,18 @@ import javafx.stage.FileChooser;
 
 import javax.crypto.SecretKey;
 
+import org.apache.log4j.Logger;
+
+import appender.GuiAppender;
+
 import key.factory.KeyFactory;
 import key.generator.TypeCle;
 import main.ProviderService;
 
 public class KeyGeneratorController implements Initializable {
-
+	
+	private static Logger logger = Logger.getLogger(KeyGeneratorController.class);
+	
 	private static final int ITERATION_COUNT = 8192;
 	@FXML
 	SplitPane splitPane;
@@ -135,10 +141,9 @@ public class KeyGeneratorController implements Initializable {
 	 */
 	@Override
 	public void initialize(URL url, ResourceBundle rsrcs) {
-		// assert list != null :
-		// "fx:id=\"list\" was not injected: check your FXML file 'IssueTrackingLite.fxml'.";
+		logger.addAppender(new GuiAppender(MainController.console));
 
-		System.out.println(this.getClass().getSimpleName() + ".initialize");
+		logger.info(this.getClass().getSimpleName() + ".initialize");
 
 		typeCle.setItems(FXCollections.observableArrayList(TypeCle.values()));
 		typeCle.getSelectionModel().select(0);

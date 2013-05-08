@@ -37,6 +37,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.apache.log4j.Logger;
+
+import appender.GuiAppender;
+
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -52,9 +56,12 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
+import main.App;
 import main.ProviderService;
 
 public class MessageDigestController implements Initializable {
+	
+	private static Logger logger = Logger.getLogger(MessageDigestController.class);
 	
     @FXML
     SplitPane splitPane;
@@ -80,10 +87,9 @@ public class MessageDigestController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rsrcs) {
-//        assert list != null : "fx:id=\"list\" was not injected: check your FXML file 'IssueTrackingLite.fxml'.";
+    	logger.addAppender(new GuiAppender(MainController.console));
         
-        System.out.println(this.getClass().getSimpleName() + ".initialize");
-        
+    	logger.info(this.getClass().getSimpleName() + ".initialize");
         
         
         algoList.setItems(FXCollections.observableArrayList(ProviderService.algo()));
