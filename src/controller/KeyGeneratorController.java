@@ -86,9 +86,6 @@ public class KeyGeneratorController implements Initializable {
 	TextArea empreinteArea;
 
 	@FXML
-	TextArea console;
-
-	@FXML
 	Label fichierSortie;
 
 	@FXML
@@ -218,7 +215,6 @@ public class KeyGeneratorController implements Initializable {
 
 	public Object generateKey(ActionEvent event) throws IOException {
 
-		this.console.setText(null);
 		this.empreinteArea.setText(null);
 		this.fichierSortie.setText(null);
 		switch (typeCle.getSelectionModel().getSelectedItem()) {
@@ -243,19 +239,16 @@ public class KeyGeneratorController implements Initializable {
 			Integer nbBits = (this.nbBits.getText() == null || this.nbBits
 					.getText().isEmpty()) ? null : Integer.parseInt(this.nbBits
 					.getText());
-			console.setText("En cours ...");
+			logger.info("En cours ...");
 			Task task = ProviderService.getKeyPair(algo, nbBits);
 		
 			new Thread(task).start();
 
-			console.setText(null);
 			task.setOnSucceeded(new EventHandler<Event>() {
 
 				@Override
 				public void handle(Event arg0) {
-					if (console.getText() == null) {
-						console.setText("Execution complete.");
-					}
+						logger.info("Execution complete.");
 
 				}
 
@@ -287,12 +280,11 @@ public class KeyGeneratorController implements Initializable {
 				this.fichierSortie.setText("Private key : " + pathPrivateKey
 						+ "\n\n" + "Public key : " + pathPublicKey);
 			} else {
-				this.console
-						.setText("Error to generate key pair : KeyPair instance is null");
+				logger.info("Error to generate key pair : KeyPair instance is null");
 
 			}
 		} catch (Exception e) {
-			this.console.setText(e.getMessage());
+			logger.info(e.getMessage());
 		}
 
 	}
@@ -311,18 +303,15 @@ public class KeyGeneratorController implements Initializable {
 					.getText().isEmpty()) ? ITERATION_COUNT : Integer
 					.parseInt(this.paddingSize.getText());
 
-			console.setText("En cours ...");
+			logger.info("En cours ...");
 			Task task = ProviderService.getSecretKey(algo, factory, keySize,
 					password, paddingValue, paddingSize);
 			new Thread(task).start();
-			console.setText(null);
 			task.setOnSucceeded(new EventHandler<Event>() {
 
 				@Override
 				public void handle(Event arg0) {
-					if (console.getText() == null) {
-						console.setText("Execution complete.");
-					}
+						logger.info("Execution complete.");
 
 				}
 
@@ -340,13 +329,11 @@ public class KeyGeneratorController implements Initializable {
 						+ new String(key.getEncoded()));
 
 			} else {
-				this.console
-						.setText("Error to generate secret key : SecretKey instance is null");
+				logger.info("Error to generate secret key : SecretKey instance is null");
 			}
 		} catch (Exception e) {
 
-			this.console
-					.setText(this.console.getText() + "\n" + e.getMessage());
+			logger.info(e.getMessage());
 		}
 	}
 

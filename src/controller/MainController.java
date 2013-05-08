@@ -173,8 +173,6 @@ public class MainController implements Initializable {
 
 	public void selectPan(String name, boolean visible) {
 
-//		for (int i = 0; i < splitPane.getItems().size(); i++)
-//			splitPane.getItems().remove(i);
 
 		try {
 			AnchorPane page = null;
@@ -192,8 +190,6 @@ public class MainController implements Initializable {
 				break;
 			}
 
-//			if (page != null)
-//				splitPane.getItems().add(page);
 			if (splitPane.getItems().get(0) != null && page != null) {
 				splitPane.getItems().remove(0);
 				splitPane.getItems().add(0, page);
