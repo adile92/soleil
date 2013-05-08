@@ -29,9 +29,9 @@ import model.TrackingService;
 import model.TrackingServiceStub;
 
 public class MainController implements Initializable {
-	
+
 	private static Logger logger = Logger.getLogger(App.class);
-	
+
 	@FXML
 	public static TextArea console;
 	@FXML
@@ -52,16 +52,13 @@ public class MainController implements Initializable {
 	@Override
 	public void initialize(URL url, ResourceBundle rsrcs) {
 		logger.addAppender(new GuiAppender(console));
-		
+
 		assert list != null : "fx:id=\"list\" was not injected: check your FXML file 'IssueTrackingLite.fxml'.";
-		
+
 		logger.info(this.getClass().getSimpleName() + ".initialize");
 
 		connectToService();
-		
-		
-		
-		
+
 		if (list != null) {
 			list.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 			list.getSelectionModel().selectedItemProperty()
@@ -173,20 +170,17 @@ public class MainController implements Initializable {
 
 	public void selectPan(String name, boolean visible) {
 
-
 		try {
 			AnchorPane page = null;
 
 			switch (name) {
 			case "Message Digest":
-				page = (AnchorPane) FXMLLoader.load(App.class.getResource("messageDigest.fxml"));
-				System.out.println(name);
-				System.out.println("Message");
+				page = (AnchorPane) FXMLLoader.load(App.class
+						.getResource("messageDigest.fxml"));
 				break;
 			case "Key Generator":
-				page = (AnchorPane) FXMLLoader.load(App.class.getResource("keyGenerator.fxml"));
-				System.out.println(name);
-				System.out.println("Key");
+				page = (AnchorPane) FXMLLoader.load(App.class
+						.getResource("keyGenerator.fxml"));
 				break;
 			}
 
@@ -194,7 +188,7 @@ public class MainController implements Initializable {
 				splitPane.getItems().remove(0);
 				splitPane.getItems().add(0, page);
 			}
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
