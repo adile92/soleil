@@ -11,13 +11,13 @@
 
 <AnchorPane id="AnchorPaneMD" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="535.0" prefWidth="600.0" styleClass="theme" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.KeyGeneratorController">
   <children>
-    <AnchorPane id="anchorPane3" fx:id="panKeyGenerator" minHeight="0.0" minWidth="0.0" prefHeight="535.0" prefWidth="600.0">
+    <AnchorPane id="anchorPane3" fx:id="panKeyGenerator" minHeight="0.0" minWidth="0.0" prefHeight="535.0" prefWidth="576.0">
       <children>
         <Label layoutX="14.0" layoutY="14.0" text="Génération de clés :" />
-        <Button id="" fx:id="generateKey" layoutX="471.0" layoutY="272.0" mnemonicParsing="false" onAction="#generateKey" text="Générer la clé" />
+        <Button id="" fx:id="generateKey" layoutX="483.0" layoutY="265.0" mnemonicParsing="false" onAction="#generateKey" text="Générer" />
         <Label layoutX="14.0" layoutY="307.0" text="Fichier de sortie :" />
         <TextArea fx:id="empreinteArea" layoutX="14.0" layoutY="329.0" prefHeight="108.0" prefWidth="572.0" wrapText="true" />
-        <Label fx:id="fichierSortie" alignment="TOP_LEFT" layoutX="111.0" layoutY="284.0" prefHeight="35.0" prefWidth="467.0" text="..." />
+        <Label fx:id="fichierSortie" alignment="TOP_LEFT" layoutX="111.0" layoutY="294.0" prefHeight="25.0" prefWidth="467.0" text="..." />
         <ChoiceBox fx:id="algoList" layoutX="104.0" layoutY="86.0" prefWidth="135.0">
           <items>
             <FXCollections fx:factory="observableArrayList">
@@ -50,17 +50,17 @@
           </items>
         </ChoiceBox>
         <Label id="password" fx:id="passwordLb" layoutX="13.0" layoutY="149.0" text="Password :" />
-        <TextField fx:id="password" layoutX="104.0" layoutY="140.0" prefWidth="313.0" />
-        <TextArea layoutX="14.0" layoutY="475.0" prefHeight="54.0" prefWidth="572.0" wrapText="true" />
+        <TextField fx:id="password" layoutX="106.0" layoutY="140.0" prefWidth="342.0" />
+        <TextArea fx:id="console" layoutX="14.0" layoutY="475.0" prefHeight="54.0" prefWidth="572.0" wrapText="true" />
         <Label layoutX="14.0" layoutY="453.0" text="Console :" />
         <Label fx:id="padding" layoutX="14.0" layoutY="180.0" text="Padding :" />
         <TextField fx:id="paddingValue" layoutX="104.0" layoutY="171.0" prefWidth="143.0" />
         <Label fx:id="paddingSizeLb" layoutX="286.0" layoutY="176.0" text="Taille padding :" />
-        <TextField fx:id="keySize" layoutX="345.0" layoutY="84.0" prefWidth="74.0" />
+        <TextField fx:id="keySize" layoutX="345.0" layoutY="84.0" prefWidth="105.0" />
         <Label fx:id="keySizeLb" layoutX="285.0" layoutY="89.0" text="Taille clé :" />
         <TextField fx:id="paddingSize" layoutX="374.0" layoutY="173.0" prefWidth="74.0" />
         <Label id="nbBits" fx:id="nbBitsLb" layoutX="286.0" layoutY="88.0" text="Nombre de bits :" />
-        <TextField fx:id="nbBits" layoutX="378.0" layoutY="84.0" prefWidth="74.0" />
+        <TextField fx:id="nbBits" layoutX="378.0" layoutY="84.0" prefWidth="74.0001220703125" />
       </children>
     </AnchorPane>
   </children>

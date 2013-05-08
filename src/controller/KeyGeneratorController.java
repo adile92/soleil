@@ -69,6 +69,7 @@ import main.ProviderService;
 
 public class KeyGeneratorController implements Initializable {
 
+	private static final int ITERATION_COUNT = 8192;
 	@FXML
 	SplitPane splitPane;
 
@@ -206,57 +207,26 @@ public class KeyGeneratorController implements Initializable {
 								e.printStackTrace();
 							}
 						}
-						// if (newFruit != null && newFruit != oldFruit) {
-						// switch() {selected.
-						// case "Apple": appleImage.setVisible(false); break;
-						// case "Orange": orangeImage.setVisible(false); break;
-						// case "Pear": pearImage.setVisible(false); break;
-						// }
-						// }
-						// if (newFruit != null) {
-						// switch(newFruit) {
-						// case "Apple": appleImage.setVisible(true); break;
-						// case "Orange": orangeImage.setVisible(true); break;
-						// case "Pear": pearImage.setVisible(true); break;
-						// }
-						// }
 					}
 				});
 	}
 
 	public Object generateKey(ActionEvent event) throws IOException {
 
-		Task task = new Task<Object>() {
+		this.console.setText(null);
+		this.empreinteArea.setText(null);
+		this.fichierSortie.setText(null);
+		switch (typeCle.getSelectionModel().getSelectedItem()) {
+		case Symetrique:
+			executeSecretKey();
+			break;
+		case Assymetrique:
+			executeKeyPair();
+			break;
+		default:
+			break;
+		}
 
-			@Override
-			protected Object call() throws Exception {
-				switch (typeCle.getSelectionModel().getSelectedItem()) {
-				case Symetrique:
-					executeSecretKey();
-					break;
-				case Assymetrique:
-					executeKeyPair();
-					break;
-				default:
-					break;
-				}
-				return true;
-			}
-		};
-		fichierSortie.setText("En cours ...");
-		new Thread(task).start();
-
-		task.setOnSucceeded(new EventHandler<Event>() {
-
-			@Override
-			public void handle(Event arg0) {
-
-				console.setText(console.getText() + "\n"
-						+ "Execution complete.");
-
-			}
-
-		});
 		return true;
 
 	}
@@ -268,8 +238,24 @@ public class KeyGeneratorController implements Initializable {
 			Integer nbBits = (this.nbBits.getText() == null || this.nbBits
 					.getText().isEmpty()) ? null : Integer.parseInt(this.nbBits
 					.getText());
+			console.setText("En cours ...");
+			Task task = ProviderService.getKeyPair(algo, nbBits);
+		
+			new Thread(task).start();
 
-			KeyPair keyPair = ProviderService.getKeyPair(algo, nbBits);
+			console.setText(null);
+			task.setOnSucceeded(new EventHandler<Event>() {
+
+				@Override
+				public void handle(Event arg0) {
+					if (console.getText() == null) {
+						console.setText("Execution complete.");
+					}
+
+				}
+
+			});
+			KeyPair keyPair = (KeyPair) task.get();
 			if (keyPair != null) {
 
 				PrivateKey privKey = keyPair.getPrivate();
@@ -279,22 +265,22 @@ public class KeyGeneratorController implements Initializable {
 				byte[] pkey = pubKey.getEncoded();
 				File file = new File(algo + "_publicKey.txt");
 				FileOutputStream keyfos = new FileOutputStream(file);
-				String pathPublicKey = file.getPath();
+				String pathPublicKey = file.getCanonicalPath();
 				keyfos.write(pkey);
 				keyfos.close();
 
 				pkey = privKey.getEncoded();
 				file = new File(algo + "_privateKey.txt");
 				keyfos = new FileOutputStream(file);
-				String pathPrivateKey = file.getPath();
+				String pathPrivateKey = file.getCanonicalPath();
 				keyfos.write(pkey);
 				keyfos.close();
 
 				this.empreinteArea.setText("Private key : "
-						+ new String(privKey.getEncoded()) + "\n"
+						+ new String(privKey.getEncoded()) + "\n\n"
 						+ "Public key : " + new String(pubKey.getEncoded()));
 				this.fichierSortie.setText("Private key : " + pathPrivateKey
-						+ "\n" + "Public key : " + pathPublicKey);
+						+ "\n\n" + "Public key : " + pathPublicKey);
 			} else {
 				this.console
 						.setText("Error to generate key pair : KeyPair instance is null");
@@ -317,36 +303,45 @@ public class KeyGeneratorController implements Initializable {
 			String password = this.password.getText();
 			String paddingValue = this.paddingValue.getText();
 			Integer paddingSize = (this.paddingSize.getText() == null || this.paddingSize
-					.getText().isEmpty()) ? null : Integer
+					.getText().isEmpty()) ? ITERATION_COUNT : Integer
 					.parseInt(this.paddingSize.getText());
 
-			SecretKey key = ProviderService.getSecretKey(algo, factory,
-					keySize, password, paddingValue, paddingSize);
+			console.setText("En cours ...");
+			Task task = ProviderService.getSecretKey(algo, factory, keySize,
+					password, paddingValue, paddingSize);
+			new Thread(task).start();
+			console.setText(null);
+			task.setOnSucceeded(new EventHandler<Event>() {
+
+				@Override
+				public void handle(Event arg0) {
+					if (console.getText() == null) {
+						console.setText("Execution complete.");
+					}
+
+				}
+
+			});
+			SecretKey key = (SecretKey) task.get();
 			if (key != null) {
 				File file = new File(key.getAlgorithm() + "_SecretKey.txt");
 				ObjectOutputStream oos = new ObjectOutputStream(
 						new FileOutputStream(file));
 				oos.writeObject(key);
 				oos.close();
-				this.fichierSortie.setText(file.getPath());
+				this.fichierSortie.setText(file.getCanonicalPath());
 
 				this.empreinteArea.setText("Secret key : "
 						+ new String(key.getEncoded()));
-				// SecureRandom keyGenRand = null;
-				// try {
-				// keyGenRand = SecureRandom.getInstance("SHA1PRNG");
-				// } catch (NoSuchAlgorithmException e) {
-				// e.printStackTrace();
-				// }
-				// keyGenRand.setSeed(key.getEncoded());
-				//
-				// System.out.println(new String(key.getEncoded()));
+
 			} else {
 				this.console
 						.setText("Error to generate secret key : SecretKey instance is null");
 			}
 		} catch (Exception e) {
-			this.console.setText(e.getMessage());
+
+			this.console
+					.setText(this.console.getText() + "\n" + e.getMessage());
 		}
 	}
 

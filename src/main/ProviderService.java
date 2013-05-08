@@ -35,7 +35,6 @@ import edu.esiag.isidis.security.provider.MyProvider;
 public class ProviderService {
 
 	private static final MyProvider provider = new MyProvider();
-	private static final int ITERATION_COUNT = 8192;
 
 	/**
 	 * retourne la liste des algo dispo
@@ -145,91 +144,106 @@ public class ProviderService {
 		};
 	}
 
-	public static SecretKey getSecretKey(String algoKeyGenerator,
-			KeyFactory factoryAlgo, Integer keyLenght, String password,
-			String paddingValue, Integer iterationCount)
-			throws InvalidKeySpecException, NoSuchAlgorithmException,
-			InvalidKeyException {
+	public static Task<SecretKey> getSecretKey(final String algoKeyGenerator,
+			final KeyFactory factoryAlgo, final Integer keyLenght,
+			final String password, final String paddingValue,
+			final Integer iterationCount) throws InvalidKeySpecException,
+			NoSuchAlgorithmException, InvalidKeyException {
 
-		KeyGenerator kg = null;
-		KeySpec keySpec = null;
-		SecretKey key;
-		SecretKeyFactory skf = null;
+		return new Task<SecretKey>() {
 
-		byte[] padding = null;
-		if (paddingValue != null && !paddingValue.isEmpty()) {
-			padding = paddingValue.getBytes();
-		} else {
-			SecureRandom saltRand = new SecureRandom(new byte[] { 1, 2, 3, 4 });
-			byte[] salt = new byte[16];
-			saltRand.nextBytes(salt);
-			padding = salt;
+			@Override
+			protected SecretKey call() throws Exception {
 
-		}
-		if (iterationCount == null) {
-			iterationCount = ITERATION_COUNT;
-		}
+				KeyGenerator kg = null;
+				KeySpec keySpec = null;
+				SecretKey key;
+				SecretKeyFactory skf = null;
 
-		switch (factoryAlgo) {
-		// autre
+				byte[] padding = null;
+				if (paddingValue != null && !paddingValue.isEmpty()) {
+					padding = paddingValue.getBytes();
+				} else {
+					SecureRandom saltRand = new SecureRandom(new byte[] { 1, 2,
+							3, 4 });
+					byte[] salt = new byte[16];
+					saltRand.nextBytes(salt);
+					padding = salt;
 
-		case DES:
-		case TripleDES:
-			kg = KeyGenerator.getInstance(factoryAlgo.name());
-			kg.init(new SecureRandom());
+				}
 
-			key = kg.generateKey();
-			skf = SecretKeyFactory.getInstance(factoryAlgo.name());
-			keySpec = new DESKeySpec(key.getEncoded());
-			break;
-		case DESede:
-			System.out.println(keyLenght);
-			kg = KeyGenerator.getInstance(factoryAlgo.name());
-			kg.init(keyLenght, new SecureRandom());
+				switch (factoryAlgo) {
+				// autre
 
-			key = kg.generateKey();
-			skf = SecretKeyFactory.getInstance(factoryAlgo.name());
-			keySpec = (DESedeKeySpec) skf.getKeySpec(key, DESedeKeySpec.class);
+				case DES:
+				case TripleDES:
+					kg = KeyGenerator.getInstance(factoryAlgo.name());
+					kg.init(new SecureRandom());
 
-			break;
-		case PBEWithMD5AndDES:
-		case PBEWithMD5AndTripleDES:
-		case PBEWithSHA1AndDESede:
-		case PBEWithSHA1AndRC2_40:
-		case PBKDF2WithHmacSHA1:
+					key = kg.generateKey();
+					skf = SecretKeyFactory.getInstance(factoryAlgo.name());
+					keySpec = new DESKeySpec(key.getEncoded());
+					break;
+				case DESede:
+					System.out.println(keyLenght);
+					kg = KeyGenerator.getInstance(factoryAlgo.name());
+					kg.init(keyLenght, new SecureRandom());
 
-			skf = SecretKeyFactory.getInstance(factoryAlgo.name());
-			if (keyLenght != null && keyLenght > 0) {
-				keySpec = new PBEKeySpec(password.toCharArray(), padding,
-						iterationCount, keyLenght);
-			} else {
-				keySpec = new PBEKeySpec(password.toCharArray(), padding,
-						iterationCount);
+					key = kg.generateKey();
+					skf = SecretKeyFactory.getInstance(factoryAlgo.name());
+					keySpec = (DESedeKeySpec) skf.getKeySpec(key,
+							DESedeKeySpec.class);
+
+					break;
+				case PBEWithMD5AndDES:
+				case PBEWithMD5AndTripleDES:
+				case PBEWithSHA1AndDESede:
+				case PBEWithSHA1AndRC2_40:
+				case PBKDF2WithHmacSHA1:
+
+					skf = SecretKeyFactory.getInstance(factoryAlgo.name());
+					if (keyLenght != null && keyLenght > 0) {
+						keySpec = new PBEKeySpec(password.toCharArray(),
+								padding, iterationCount, keyLenght);
+					} else {
+						keySpec = new PBEKeySpec(password.toCharArray(),
+								padding, iterationCount);
+					}
+					break;
+				default:
+					// skf = SecretKeyFactory.getInstance("DES");
+					// return keySpec = new
+					// SecretKeySpec(password.getBytes("UTF-8"),
+					// factoryAlgo.name());
+					break;
+				}
+				if (skf == null) {
+					return null;
+				}
+				SecretKey keyTemp = skf.generateSecret(keySpec);
+				SecretKey secret = new SecretKeySpec(keyTemp.getEncoded(),
+						algoKeyGenerator);
+				return secret;
 			}
-			break;
-		default:
-			// skf = SecretKeyFactory.getInstance("DES");
-			// return keySpec = new SecretKeySpec(password.getBytes("UTF-8"),
-			// factoryAlgo.name());
-			break;
-		}
-		if (skf == null) {
-			return null;
-		}
-		SecretKey keyTemp = skf.generateSecret(keySpec);
-		SecretKey secret = new SecretKeySpec(keyTemp.getEncoded(),
-				algoKeyGenerator);
-		return secret;
+		};
 	}
 
-	public static KeyPair getKeyPair(String keyAlgorithm, int numBits)
-			throws NoSuchAlgorithmException, NoSuchProviderException {
+	public static Task<KeyPair> getKeyPair(final String keyAlgorithm,
+			final int numBits) throws NoSuchAlgorithmException,
+			NoSuchProviderException {
 		// Get the public/private key pair
+		return new Task<KeyPair>() {
 
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance(keyAlgorithm);
-		SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
-		keyGen.initialize(numBits, random);
-		KeyPair keyPair = keyGen.generateKeyPair();
-		return keyPair;
+			@Override
+			protected KeyPair call() throws Exception {
+				KeyPairGenerator keyGen = KeyPairGenerator
+						.getInstance(keyAlgorithm);
+				SecureRandom random = SecureRandom.getInstance("SHA1PRNG",
+						"SUN");
+				keyGen.initialize(numBits, random);
+				KeyPair keyPair = keyGen.generateKeyPair();
+				return keyPair;
+			}
+		};
 	}
 }
