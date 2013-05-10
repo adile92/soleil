@@ -41,7 +41,6 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -63,13 +62,15 @@ import javafx.stage.FileChooser;
 
 import javax.crypto.SecretKey;
 
-import org.apache.log4j.Logger;
-
-import appender.GuiAppender;
-
 import key.factory.KeyFactory;
 import key.generator.TypeCle;
 import main.ProviderService;
+
+import org.apache.log4j.Logger;
+
+import sun.security.provider.DSAPublicKey;
+import sun.security.x509.AlgorithmId;
+import appender.GuiAppender;
 
 public class KeyGeneratorController implements Initializable {
 	
@@ -217,6 +218,7 @@ public class KeyGeneratorController implements Initializable {
 
 		this.empreinteArea.setText(null);
 		this.fichierSortie.setText(null);
+		
 		switch (typeCle.getSelectionModel().getSelectedItem()) {
 		case Symetrique:
 			executeSecretKey();
@@ -255,10 +257,9 @@ public class KeyGeneratorController implements Initializable {
 			});
 			KeyPair keyPair = (KeyPair) task.get();
 			if (keyPair != null) {
-
+				
 				PrivateKey privKey = keyPair.getPrivate();
 				PublicKey pubKey = keyPair.getPublic();
-
 				// Store the keys
 				byte[] pkey = pubKey.getEncoded();
 				File file = new File(algo + "_publicKey.txt");

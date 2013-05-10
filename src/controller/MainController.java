@@ -152,7 +152,7 @@ public class MainController implements Initializable {
 	private void projectUnselected(String oldProjectName) {
 		if (oldProjectName != null) {
 
-			System.out.println(oldProjectName + " unselected");
+//			System.out.println(oldProjectName + " unselected");
 
 			// selectPan(oldProjectName, false);
 		}
@@ -161,7 +161,7 @@ public class MainController implements Initializable {
 	// Called when a project is selected.
 	private void projectSelected(String newProjectName) {
 		if (newProjectName != null) {
-			System.out.println(newProjectName + " selected ");
+//			System.out.println(newProjectName + " selected ");
 
 			selectPan(newProjectName, true);
 
