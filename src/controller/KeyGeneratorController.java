@@ -1,38 +1,6 @@
-/*
- * Copyright (c) 2012 Oracle and/or its affiliates.
- * All rights reserved. Use is subject to license terms.
- *
- * This file is available and licensed under the following license:
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *  - Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *  - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle nor the names of its
- *    contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 package controller;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -40,6 +8,9 @@ import java.net.URL;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.beans.value.ChangeListener;
@@ -50,33 +21,42 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.stage.FileChooser;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import javax.crypto.SecretKey;
 
 import key.factory.KeyFactory;
 import key.generator.TypeCle;
+import main.App;
 import main.ProviderService;
+import model.Certificate;
 
 import org.apache.log4j.Logger;
 
-import sun.security.provider.DSAPublicKey;
-import sun.security.x509.AlgorithmId;
 import appender.GuiAppender;
+import certificate.CertificateAlgorithm;
 
 public class KeyGeneratorController implements Initializable {
-	
-	private static Logger logger = Logger.getLogger(KeyGeneratorController.class);
-	
+
+	private static Logger logger = Logger
+			.getLogger(KeyGeneratorController.class);
+
 	private static final int ITERATION_COUNT = 8192;
+
+	private static final int NB_DAY_MAX = 99;
 	@FXML
 	SplitPane splitPane;
 
@@ -100,6 +80,15 @@ public class KeyGeneratorController implements Initializable {
 
 	@FXML
 	ChoiceBox<KeyFactory> factoryList;
+
+	@FXML
+	ChoiceBox<Integer> certificateLonger;
+
+	@FXML
+	ChoiceBox<CertificateAlgorithm> certificateAlgo;
+
+	@FXML
+	CheckBox checkCertificate;
 
 	@FXML
 	TextField paddingSize;
@@ -134,6 +123,10 @@ public class KeyGeneratorController implements Initializable {
 	@FXML
 	Label keySizeLb;
 
+	boolean okClicked;
+
+	Certificate certificate;
+
 	/**
 	 * Initializes the controller class.
 	 */
@@ -145,6 +138,17 @@ public class KeyGeneratorController implements Initializable {
 
 		typeCle.setItems(FXCollections.observableArrayList(TypeCle.values()));
 		typeCle.getSelectionModel().select(0);
+
+		List<Integer> days = new ArrayList<Integer>();
+		for (int i = 0; i < NB_DAY_MAX; i++) {
+			days.add(i);
+		}
+		certificateLonger.setItems(FXCollections.observableArrayList(days));
+		certificateLonger.getSelectionModel().select(0);
+
+		certificateAlgo.setItems(FXCollections
+				.observableArrayList(CertificateAlgorithm.values()));
+		certificateAlgo.getSelectionModel().select(0);
 
 		algoList.setItems(FXCollections.observableArrayList(ProviderService
 				.cleAlgoGenerationSymetrique()));
@@ -212,13 +216,32 @@ public class KeyGeneratorController implements Initializable {
 						}
 					}
 				});
+
+		checkCertificate.selectedProperty().addListener(
+				new ChangeListener<Boolean>() {
+
+					public void changed(ObservableValue<? extends Boolean> ov,
+							Boolean old_val, Boolean new_val) {
+
+						if (new_val) {
+							certificate = new Certificate();
+							okClicked = showPersonEditDialog(certificate);
+
+						}
+						if (!okClicked ) {
+							checkCertificate.setSelected(false);
+						}else{
+							checkCertificate.setSelected(true);
+						}
+					}
+				});
 	}
 
 	public Object generateKey(ActionEvent event) throws IOException {
 
 		this.empreinteArea.setText(null);
 		this.fichierSortie.setText(null);
-		
+
 		switch (typeCle.getSelectionModel().getSelectedItem()) {
 		case Symetrique:
 			executeSecretKey();
@@ -243,43 +266,83 @@ public class KeyGeneratorController implements Initializable {
 					.getText());
 			logger.info("En cours ...");
 			Task task = ProviderService.getKeyPair(algo, nbBits);
-		
+
 			new Thread(task).start();
 
 			task.setOnSucceeded(new EventHandler<Event>() {
 
 				@Override
 				public void handle(Event arg0) {
-						logger.info("Execution complete.");
+					logger.info("Execution complete.");
 
 				}
 
 			});
 			KeyPair keyPair = (KeyPair) task.get();
 			if (keyPair != null) {
-				
+
 				PrivateKey privKey = keyPair.getPrivate();
 				PublicKey pubKey = keyPair.getPublic();
 				// Store the keys
 				byte[] pkey = pubKey.getEncoded();
-				File file = new File(algo + "_publicKey.txt");
+				File file = new File(algo + "_publicKey.pbk");
 				FileOutputStream keyfos = new FileOutputStream(file);
 				String pathPublicKey = file.getCanonicalPath();
 				keyfos.write(pkey);
 				keyfos.close();
 
 				pkey = privKey.getEncoded();
-				file = new File(algo + "_privateKey.txt");
+				file = new File(algo + "_privateKey.pvk");
 				keyfos = new FileOutputStream(file);
 				String pathPrivateKey = file.getCanonicalPath();
 				keyfos.write(pkey);
 				keyfos.close();
+				Task taskCertificate = null;
+				String pathCertif = null;
+				byte[] certif = null;
+				if (okClicked && checkCertificate.selectedProperty().getValue()) {
+					taskCertificate = ProviderService.generateCertificate(
+							certificate, keyPair, certificateLonger
+									.getSelectionModel().getSelectedItem(),
+							certificateAlgo.getSelectionModel()
+									.getSelectedItem().name());
 
-				this.empreinteArea.setText("Private key : "
+					taskCertificate.setOnSucceeded(new EventHandler<Event>() {
+
+						@Override
+						public void handle(Event arg0) {
+							logger.info("Execution complete.");
+
+						}
+
+					});
+
+					certif = ((X509Certificate) taskCertificate.get())
+							.getEncoded();
+					File certifFile = new File(algo + "_certificate.cer");
+					FileOutputStream certifFos = new FileOutputStream(file);
+					pathCertif = file.getCanonicalPath();
+					certifFos.write(certif);
+					certifFos.close();
+				}
+
+				String value = "Private key : "
 						+ new String(privKey.getEncoded()) + "\n\n"
-						+ "Public key : " + new String(pubKey.getEncoded()));
-				this.fichierSortie.setText("Private key : " + pathPrivateKey
-						+ "\n\n" + "Public key : " + pathPublicKey);
+						+ "Public key : " + new String(pubKey.getEncoded());
+
+				if (certif != null) {
+					value += "\n\nCertificate : " + new String(certif);
+				}
+				this.empreinteArea.setText(value);
+
+				String pathValue = "Private key : " + pathPrivateKey + "\n\n"
+						+ "Public key : " + pathPublicKey;
+
+				if (pathCertif != null) {
+					pathValue += "\n\nCertificate : " + pathCertif;
+				}
+
+				this.fichierSortie.setText(pathValue);
 			} else {
 				logger.info("Error to generate key pair : KeyPair instance is null");
 
@@ -312,14 +375,14 @@ public class KeyGeneratorController implements Initializable {
 
 				@Override
 				public void handle(Event arg0) {
-						logger.info("Execution complete.");
+					logger.info("Execution complete.");
 
 				}
 
 			});
 			SecretKey key = (SecretKey) task.get();
 			if (key != null) {
-				File file = new File(key.getAlgorithm() + "_SecretKey.txt");
+				File file = new File(key.getAlgorithm() + "_SecretKey.sck");
 				ObjectOutputStream oos = new ObjectOutputStream(
 						new FileOutputStream(file));
 				oos.writeObject(key);
@@ -338,53 +401,33 @@ public class KeyGeneratorController implements Initializable {
 		}
 	}
 
-	public void newMdFileChooser(ActionEvent event) throws IOException {
+	public boolean showPersonEditDialog(Certificate certificate) {
+		try {
+			// Load the fxml file and create a new stage for the popup
+			FXMLLoader loader = new FXMLLoader(
+					App.class.getResource("CertificateEditDialog.fxml"));
+			AnchorPane page = (AnchorPane) loader.load();
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Création d'un certificat");
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			// dialogStage.initOwner(primaryStage);
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
 
-		FileChooser fileChooser = new FileChooser();
-		File file;
+			// Set the person into the controller
+			CertificateEditDialogController controller = loader.getController();
+			controller.setDialogStage(dialogStage);
+			controller.setCertificate(certificate);
 
-		file = fileChooser.showOpenDialog(null);
+			// Show the dialog and wait until the user closes it
+			dialogStage.showAndWait();
 
-		if (file != null) {
+			return controller.isOkClicked();
 
-			String algo = algoList.getSelectionModel().getSelectedItem();
-			final String cheminEmpreinte = file.getParent() + "/"
-					+ "empreinte.txt";
-
-			final Task performMessageDigest = ProviderService
-					.performMessageDigest(algo, file, cheminEmpreinte);
-
-			progress.progressProperty().bind(
-					performMessageDigest.progressProperty());
-
-			new Thread(performMessageDigest).start();
-			fichierSortie.setText("En cours ...");
-
-			performMessageDigest.setOnSucceeded(new EventHandler<Event>() {
-
-				@Override
-				public void handle(Event event) {
-
-					FileInputStream empreinteStream;
-					try {
-						empreinteStream = new FileInputStream(cheminEmpreinte);
-						byte[] b = new byte[empreinteStream.available()];
-						empreinteStream.read(b, 0, empreinteStream.available());
-
-						String empreinte = new String(b);
-
-						fichierSortie.setText(cheminEmpreinte);
-						empreinteArea.setText(empreinte);
-
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-				}
-			});
-
+		} catch (IOException e) {
+			// Exception gets thrown if the fxml file could not be loaded
+			e.printStackTrace();
+			return false;
 		}
 	}
-
 }

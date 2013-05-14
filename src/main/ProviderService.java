@@ -15,7 +15,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
@@ -36,6 +35,7 @@ import javax.crypto.spec.SecretKeySpec;
 import key.factory.KeyFactory;
 import key.generator.AssymetricKey;
 import key.generator.SymetricKey;
+import model.Certificate;
 import sun.security.x509.AlgorithmId;
 import sun.security.x509.CertificateAlgorithmId;
 import sun.security.x509.CertificateIssuerName;
@@ -164,8 +164,9 @@ public class ProviderService {
 		};
 	}
 
-	public static Task<X509Certificate> generateCertificate(final String dn,
-			final KeyPair pair, final int days, final String algorithm)
+	public static Task<X509Certificate> generateCertificate(
+			final Certificate certificate, final KeyPair pair,
+			final Integer days, final String algorithm)
 			throws GeneralSecurityException, IOException {
 
 		return new Task<X509Certificate>() {
@@ -176,11 +177,19 @@ public class ProviderService {
 				PrivateKey privkey = pair.getPrivate();
 				X509CertInfo info = new X509CertInfo();
 				Date from = new Date();
-				Date to = new Date(from.getTime() + days * 86400000l);
+				Date to;
+				if (days == null) {
+					to = new Date(from.getTime() + 30 * 86400000l);
+				}else{
+					to = new Date(from.getTime() + days * 86400000l);
+				}
 				CertificateValidity interval = new CertificateValidity(from, to);
 				BigInteger sn = new BigInteger(64, new SecureRandom());
-				X500Name owner = new X500Name(dn);
-
+				// common, orgUnit, org, locality, state, country
+				X500Name owner = new X500Name(certificate.getCN(),
+						certificate.getOU(), certificate.getO(),
+						certificate.getL(), certificate.getS(),
+						certificate.getC());
 				info.set(X509CertInfo.VALIDITY, interval);
 				info.set(X509CertInfo.SERIAL_NUMBER,
 						new CertificateSerialNumber(sn));
@@ -208,58 +217,32 @@ public class ProviderService {
 				cert = new X509CertImpl(info);
 				cert.sign(privkey, algorithm);
 				return cert;
-				
-				
-				/*	DH 
-					DH_PKIX 
-					DSA 
-					DSA_OIW 
-					EC 
-					MD2
-				Algorithm ID for the MD2 Message Digest Algorthm, from RFC 1319.
-					md2WithRSAEncryption 
-					MD5
-				Algorithm ID for the MD5 Message Digest Algorthm, from RFC 1321.
-					md5WithRSAEncryption 
-				protected DerValue	params
-				Parameters for this algorithm.
-					pbeWithMD5AndDES
-				Algorithm ID for the PBE encryption algorithms from PKCS#5 and PKCS#12.
-					pbeWithMD5AndRC2 
-					pbeWithSHA1AndDES 
-					pbeWithSHA1AndDESede 
-					pbeWithSHA1AndRC2_40 
-					pbeWithSHA1AndRC2 
-					RSA 
-					RSAEncryption 
-					SHA
-				Algorithm ID for the SHA1 Message Digest Algorithm, from FIPS 180-1.
-					sha1WithDSA 
-					sha1WithDSA_OIW 
-					sha1WithECDSA 
-					sha1WithRSAEncryption 
-					sha1WithRSAEncryption_OIW 
-					sha224WithECDSA 
-					SHA256 
-					sha256WithECDSA 
-					sha256WithRSAEncryption 
-					SHA384 
-					sha384WithECDSA 
-					sha384WithRSAEncryption 
-					SHA512 
-					sha512WithECDSA 
-					sha512WithRSAEncryption 
-					shaWithDSA_OIW 
-					specifiedWithECDSA 
+
+				/*
+				 * DH DH_PKIX DSA DSA_OIW EC MD2 Algorithm ID for the MD2
+				 * Message Digest Algorthm, from RFC 1319. md2WithRSAEncryption
+				 * MD5 Algorithm ID for the MD5 Message Digest Algorthm, from
+				 * RFC 1321. md5WithRSAEncryption protected DerValue params
+				 * Parameters for this algorithm. pbeWithMD5AndDES Algorithm ID
+				 * for the PBE encryption algorithms from PKCS#5 and PKCS#12.
+				 * pbeWithMD5AndRC2 pbeWithSHA1AndDES pbeWithSHA1AndDESede
+				 * pbeWithSHA1AndRC2_40 pbeWithSHA1AndRC2 RSA RSAEncryption SHA
+				 * Algorithm ID for the SHA1 Message Digest Algorithm, from FIPS
+				 * 180-1. sha1WithDSA sha1WithDSA_OIW sha1WithECDSA
+				 * sha1WithRSAEncryption sha1WithRSAEncryption_OIW
+				 * sha224WithECDSA SHA256 sha256WithECDSA
+				 * sha256WithRSAEncryption SHA384 sha384WithECDSA
+				 * sha384WithRSAEncryption SHA512 sha512WithECDSA
+				 * sha512WithRSAEncryption shaWithDSA_OIW specifiedWithECDSA
 				 */
 			}
 		};
 	}
 
-	public static void generate(){
-	
+	public static void generate() {
+
 	}
-	
+
 	public static Task<SecretKey> getSecretKey(final String algoKeyGenerator,
 			final KeyFactory factoryAlgo, final Integer keyLenght,
 			final String password, final String paddingValue,

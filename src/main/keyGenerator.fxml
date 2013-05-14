@@ -15,7 +15,7 @@
       <content>
         <AnchorPane id="anchorPane3" fx:id="panKeyGenerator" prefHeight="531.0" prefWidth="558.0">
           <children>
-            <Button id="" fx:id="generateKey" layoutX="239.0" layoutY="221.0" mnemonicParsing="false" onAction="#generateKey" text="Générer" />
+            <Button id="" fx:id="generateKey" layoutX="239.0" layoutY="226.0" mnemonicParsing="false" onAction="#generateKey" text="Générer" />
             <Label layoutX="35.0" layoutY="260.0" prefWidth="104.99990000000253" text="Fichier de sortie :" />
             <TextArea fx:id="empreinteArea" layoutX="22.0" layoutY="347.0" prefHeight="108.0" prefWidth="526.0" wrapText="true" />
             <Label fx:id="fichierSortie" alignment="TOP_LEFT" layoutX="146.0" layoutY="263.0" prefHeight="62.0" prefWidth="402.0" text="..." />
@@ -38,7 +38,7 @@
                 </FXCollections>
               </items>
             </ChoiceBox>
-            <Label layoutX="34.0" layoutY="31.0" text="Type de clé :" />
+            <Label layoutX="35.0" layoutY="32.0" text="Type de clé :" />
             <Label fx:id="factory" layoutX="35.0" layoutY="89.0" text="Fabrique :" />
             <ChoiceBox fx:id="factoryList" layoutX="125.0" layoutY="86.0" prefWidth="135.0">
               <items>
@@ -59,6 +59,27 @@
             <TextField fx:id="paddingSize" layoutX="443.0" layoutY="143.0" prefWidth="105.0" />
             <Label id="nbBits" fx:id="nbBitsLb" layoutX="345.0" layoutY="29.0" prefWidth="105.0" text="Nombre de bits :" />
             <TextField fx:id="nbBits" layoutX="443.0" layoutY="24.0" prefWidth="105.0" />
+            <CheckBox id="checkCerfificat" fx:id="checkCertificate" layoutX="35.0" layoutY="188.0" mnemonicParsing="false" opacity="0.73" text="Générer certificat" />
+            <ChoiceBox fx:id="certificateAlgo" layoutX="443.0" layoutY="187.0" prefWidth="104.99990000000253">
+              <items>
+                <FXCollections fx:factory="observableArrayList">
+                  <String fx:value="Item 1" />
+                  <String fx:value="Item 2" />
+                  <String fx:value="Item 3" />
+                </FXCollections>
+              </items>
+            </ChoiceBox>
+            <Label layoutX="345.0" layoutY="190.0" text="Algorithme :" />
+            <ChoiceBox id="boxDuree" fx:id="certificateLonger" layoutX="270.0" layoutY="187.0" prefWidth="41.0">
+              <items>
+                <FXCollections fx:factory="observableArrayList">
+                  <String fx:value="Item 1" />
+                  <String fx:value="Item 2" />
+                  <String fx:value="Item 3" />
+                </FXCollections>
+              </items>
+            </ChoiceBox>
+            <Label layoutX="193.0" layoutY="190.0" text="Durée (jours) :" />
           </children>
         </AnchorPane>
       </content>
