@@ -18,7 +18,7 @@
             <Button id="" fx:id="generateKey" layoutX="239.0" layoutY="226.0" mnemonicParsing="false" onAction="#generateKey" text="Générer" />
             <Label layoutX="35.0" layoutY="260.0" prefWidth="104.99990000000253" text="Fichier de sortie :" />
             <TextArea fx:id="empreinteArea" layoutX="22.0" layoutY="347.0" prefHeight="108.0" prefWidth="526.0" wrapText="true" />
-            <Label fx:id="fichierSortie" alignment="TOP_LEFT" layoutX="146.0" layoutY="263.0" prefHeight="62.0" prefWidth="402.0" text="..." />
+            <Label fx:id="fichierSortie" alignment="TOP_LEFT" layoutX="146.0" layoutY="263.0" prefHeight="84.0" prefWidth="402.0" text="..." />
             <ChoiceBox fx:id="algoList" layoutX="125.0" layoutY="58.0" prefWidth="135.0">
               <items>
                 <FXCollections fx:factory="observableArrayList">
@@ -69,7 +69,7 @@
                 </FXCollections>
               </items>
             </ChoiceBox>
-            <Label layoutX="345.0" layoutY="190.0" text="Algorithme :" />
+            <Label fx:id="lbCertifAlgo" layoutX="345.0" layoutY="190.0" text="Algorithme :" />
             <ChoiceBox id="boxDuree" fx:id="certificateLonger" layoutX="270.0" layoutY="187.0" prefWidth="41.0">
               <items>
                 <FXCollections fx:factory="observableArrayList">
@@ -79,7 +79,7 @@
                 </FXCollections>
               </items>
             </ChoiceBox>
-            <Label layoutX="193.0" layoutY="190.0" text="Durée (jours) :" />
+            <Label fx:id="lbDuree" layoutX="193.0" layoutY="190.0" text="Durée (jours) :" />
           </children>
         </AnchorPane>
       </content>

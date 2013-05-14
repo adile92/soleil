@@ -118,6 +118,12 @@ public class KeyGeneratorController implements Initializable {
 	Label paddingSizeLb;
 
 	@FXML
+	Label lbCertifAlgo;
+
+	@FXML
+	Label lbDuree;
+
+	@FXML
 	Label nbBitsLb;
 
 	@FXML
@@ -162,6 +168,11 @@ public class KeyGeneratorController implements Initializable {
 
 		nbBitsLb.setVisible(false);
 		nbBits.setVisible(false);
+		certificateLonger.setVisible(false);
+		certificateAlgo.setVisible(false);
+		checkCertificate.setVisible(false);
+		lbCertifAlgo.setVisible(false);
+		lbDuree.setVisible(false);
 		typeCle.getSelectionModel().selectedItemProperty()
 				.addListener(new ChangeListener<TypeCle>() {
 					@Override
@@ -173,7 +184,10 @@ public class KeyGeneratorController implements Initializable {
 									.observableArrayList(ProviderService
 											.cleAlgoGenerationSymetrique()));
 							algoList.getSelectionModel().select(0);
-
+							certificateLonger.setLayoutY(190);
+							certificateAlgo.setLayoutY(190);
+							checkCertificate.setLayoutY(190);
+							lbCertifAlgo.setLayoutY(190);
 							factoryList.setVisible(true);
 							password.setVisible(true);
 							paddingValue.setVisible(true);
@@ -184,7 +198,12 @@ public class KeyGeneratorController implements Initializable {
 							paddingSize.setVisible(true);
 							keySize.setVisible(true);
 							keySizeLb.setVisible(true);
-
+							certificateLonger.setVisible(false);
+							certificateAlgo.setVisible(false);
+							lbCertifAlgo.setVisible(false);
+							lbDuree.setVisible(false);
+							lbDuree.setLayoutY(190);
+							checkCertificate.setVisible(false);
 							nbBitsLb.setVisible(false);
 							nbBits.setVisible(false);
 						} else if (selected.getValue().equals(
@@ -193,7 +212,16 @@ public class KeyGeneratorController implements Initializable {
 									.observableArrayList(ProviderService
 											.cleAlgoGenerationAssymetrique()));
 							algoList.getSelectionModel().select(0);
-
+							lbCertifAlgo.setVisible(true);
+							lbCertifAlgo.setLayoutY(85);
+							lbDuree.setVisible(true);
+							lbDuree.setLayoutY(85);
+							certificateLonger.setVisible(true);
+							certificateLonger.setLayoutY(85);
+							certificateAlgo.setVisible(true);
+							certificateAlgo.setLayoutY(85);
+							checkCertificate.setVisible(true);
+							checkCertificate.setLayoutY(85);
 							factoryList.setVisible(false);
 							password.setVisible(false);
 							paddingValue.setVisible(false);
@@ -228,9 +256,9 @@ public class KeyGeneratorController implements Initializable {
 							okClicked = showPersonEditDialog(certificate);
 
 						}
-						if (!okClicked ) {
+						if (!okClicked) {
 							checkCertificate.setSelected(false);
-						}else{
+						} else {
 							checkCertificate.setSelected(true);
 						}
 					}
@@ -307,6 +335,8 @@ public class KeyGeneratorController implements Initializable {
 							certificateAlgo.getSelectionModel()
 									.getSelectedItem().name());
 
+					new Thread(taskCertificate).start();
+
 					taskCertificate.setOnSucceeded(new EventHandler<Event>() {
 
 						@Override
@@ -321,7 +351,7 @@ public class KeyGeneratorController implements Initializable {
 							.getEncoded();
 					File certifFile = new File(algo + "_certificate.cer");
 					FileOutputStream certifFos = new FileOutputStream(file);
-					pathCertif = file.getCanonicalPath();
+					pathCertif = certifFile.getCanonicalPath();
 					certifFos.write(certif);
 					certifFos.close();
 				}
