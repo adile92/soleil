@@ -8,6 +8,7 @@ import java.security.Key;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
+import javax.crypto.spec.SecretKeySpec;
 
 import main.ProviderService;
 
@@ -32,7 +33,8 @@ public class Chiffrement {
 		MyProvider provider = new MyProvider();
 		
 		Cipher cipher = provider.getCipher(algo); // DES/ECB/PKCS5Padding for SunJCE
-
+		
+		
 		if (mode == Cipher.ENCRYPT_MODE) {
 			cipher.init(Cipher.ENCRYPT_MODE, key);
 			CipherInputStream cis = new CipherInputStream(is, cipher);

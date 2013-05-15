@@ -91,9 +91,6 @@ public class ChiffrementController implements Initializable {
     TextField fichierSortie;
     
     @FXML
-    ChoiceBox<String> algoList;
-    
-    @FXML
     ProgressBar progress;
     
     @FXML
@@ -113,9 +110,6 @@ public class ChiffrementController implements Initializable {
     	logger.info(this.getClass().getSimpleName() + ".initialize");
         
         
-        algoList.setItems(FXCollections.observableArrayList(ProviderService.algoChiffrement()));
-        // on set le 1er de la list comme valeur par defaut
-        algoList.getSelectionModel().select(0);
         
     }
     
@@ -159,7 +153,6 @@ public class ChiffrementController implements Initializable {
 		if (clearFile != null) {
 			
 			
-			String algo = algoList.getSelectionModel().getSelectedItem();
 			
 			MyProvider provider = new MyProvider();
 			Key key = null;
@@ -180,19 +173,8 @@ public class ChiffrementController implements Initializable {
 				key = (Key) ois.readObject();
 				fis.close();
 				
-//				key = new SecretKeySpec(encodedPrivateKey, algo);
 				
-//				switch(algo){
-//					case "DES" :
-//					{
-//						KeySpec dks = new KeySpec(readKey.getBytes());
-//						SecretKeyFactory skf = SecretKeyFactory.getInstance("DES");
-//						SecretKey desKey = skf.generateSecret(dks);
-//					}
-//				}
 				
-				// demander a l'user le type de clé........
-//				key = provider.getKeyGenerator(algo).generateKey();
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -202,11 +184,11 @@ public class ChiffrementController implements Initializable {
 				e.printStackTrace();
 			}
 			
-			final Task performChiffrement  = ProviderService.performChiffrement(algo, clearFile, key);
+			final Task performChiffrement  = ProviderService.performChiffrement(key.getAlgorithm(), clearFile, key);
 			
 			progress.progressProperty().bind(performChiffrement.progressProperty());
 			
-			logger.info("Chiffrement Algo : "+algo+" en cours");
+			logger.info("Chiffrement Algo : "+key.getAlgorithm()+" en cours");
 			
 			new Thread(performChiffrement).start();
 			
@@ -220,9 +202,8 @@ public class ChiffrementController implements Initializable {
 				public void handle(Event event) {
 					// TODO Auto-generated method stub
 					
-					String algo = algoList.getSelectionModel().getSelectedItem();
 					fichierSortie.setText(pathFile);
-					logger.info("Chiffrement Algo : "+algo+" fini");
+					logger.info("Chiffrement fini");
 					
 				}
 			});

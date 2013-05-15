@@ -18,16 +18,6 @@
             <Label layoutX="14.0" layoutY="22.0" text="Chiffrement :" />
             <Button fx:id="fileChooser" layoutX="407.0" layoutY="115.0" mnemonicParsing="false" onAction="#newCipherFileChooser" text="Choisir un fichier" />
             <Label layoutX="15.0" layoutY="206.0" text="Fichier de sortie :" />
-            <ChoiceBox fx:id="algoList" layoutX="119.0" layoutY="63.0">
-              <items>
-                <FXCollections fx:factory="observableArrayList">
-                  <String fx:value="Item 1" />
-                  <String fx:value="Item 2" />
-                  <String fx:value="Item 3" />
-                </FXCollections>
-              </items>
-            </ChoiceBox>
-            <Label layoutX="14.0" layoutY="66.0" text="Algorithme :" />
             <ProgressBar fx:id="progress" layoutX="105.0" layoutY="26.0" prefWidth="200.0" progress="0.0" />
             <TextField fx:id="fichierSortie" layoutX="120.0" layoutY="204.0" prefWidth="421.0" />
             <Button layoutX="407.0" layoutY="158.0" mnemonicParsing="false" onAction="#newCipherKeyFileChooser" prefWidth="126.0" text="Choisir une clé" />
