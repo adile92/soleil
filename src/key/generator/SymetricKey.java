@@ -7,11 +7,7 @@ public enum SymetricKey {
 	 Blowfish,
 	 DES,
 	 DESede,
-	 HmacMD5,
-	 HmacSHA1,
-	 HmacSHA256,
-	 HmacSHA384,
-	 HmacSHA512,
+	 TripleDES,
 	 RC2, 
 	 RC4
 }
