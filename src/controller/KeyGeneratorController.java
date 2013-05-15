@@ -38,7 +38,6 @@ import javafx.stage.Stage;
 
 import javax.crypto.SecretKey;
 
-import key.factory.KeyFactory;
 import key.generator.TypeCle;
 import main.App;
 import main.ProviderService;

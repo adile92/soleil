@@ -19,27 +19,15 @@ import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javafx.concurrent.Task;
 
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.DESKeySpec;
-import javax.crypto.spec.DESedeKeySpec;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
 
-import chiffrement.Chiffrement;
-
-import key.factory.KeyFactory;
 import key.generator.AssymetricKey;
 import key.generator.SymetricKey;
 import model.Certificate;
@@ -54,6 +42,7 @@ import sun.security.x509.CertificateX509Key;
 import sun.security.x509.X500Name;
 import sun.security.x509.X509CertImpl;
 import sun.security.x509.X509CertInfo;
+import chiffrement.Chiffrement;
 import edu.esiag.isidis.security.provider.MyProvider;
 import fr.cryptohash.Digest;
 
