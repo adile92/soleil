@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
@@ -25,6 +26,9 @@ import java.util.List;
 
 import javafx.concurrent.Task;
 
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -32,6 +36,8 @@ import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import chiffrement.Chiffrement;
 
 import key.factory.KeyFactory;
 import key.generator.AssymetricKey;
@@ -49,17 +55,18 @@ import sun.security.x509.X500Name;
 import sun.security.x509.X509CertImpl;
 import sun.security.x509.X509CertInfo;
 import edu.esiag.isidis.security.provider.MyProvider;
+import fr.cryptohash.Digest;
 
 public class ProviderService {
 
 	private static final MyProvider provider = new MyProvider();
-
+	final static int MAXREAD = 1048576 * 100;  
 	/**
 	 * retourne la liste des algo dispo
 	 * 
 	 * @return
 	 */
-	public static String[] algo() {
+	public static String[] algoMD() {
 		List<String> list = new ArrayList<>();
 		list.add("MD5");
 		list.add("SHA");
@@ -67,8 +74,23 @@ public class ProviderService {
 		list.add("SHA-256");
 		list.add("SHA-384");
 		list.add("SHA-512");
+		list.add("Keccak-224");
+		list.add("Keccak-256");
+		list.add("Keccak-384");
+		list.add("Keccak-512");
 
 		return list.toArray(new String[list.size()]);
+	}
+	
+	public static String[] algoChiffrement() {
+		List<String> list = new ArrayList<>();
+		
+		for (SymetricKey cle : SymetricKey.values()) {
+			list.add(cle.name());
+		}
+		
+		return list.toArray(new String[list.size()]);
+		
 	}
 
 	public static String[] cleAlgoGenerationSymetrique() {
@@ -93,19 +115,28 @@ public class ProviderService {
 
 	}
 
-	public static Task<?> performMessageDigest(final String algo,
-			final File file, final String cheminEmpreinte) {
+	public static Task<?> performMessageDigest(final String algo,final File file, final String cheminEmpreinte) {
 		return new Task<Object>() {
 			@Override
 			protected Object call() throws Exception {
-				MessageDigest md = null;
+				MessageDigest md 	= null;
+				Digest keccak		= null;
+				boolean keccakOrNot	= false;
+				
 				StringBuffer buff = new StringBuffer();
 				try {
 					FileInputStream fis = new FileInputStream(file);
 
 					int tailleContent = fis.available();
-
-					md = provider.getMessageDigest(algo);
+					
+					if(algo.startsWith("Keccak")){
+						keccakOrNot = true;
+						int version = Integer.valueOf(algo.substring(algo.length()-3, algo.length()));
+						
+						keccak = provider.getKeccak(version);
+					}
+					else
+						md = provider.getMessageDigest(algo);
 
 					int content;
 
@@ -114,10 +145,15 @@ public class ProviderService {
 						updateProgress(buff.length(), tailleContent);
 					}
 
-					String empreinte = new String(md.digest(buff.toString()
-							.getBytes()));
-					FileOutputStream fos = new FileOutputStream(new File(
-							cheminEmpreinte));
+					String empreinte;
+					
+					if(!keccakOrNot)
+						empreinte = new String(md.digest(buff.toString().getBytes()));
+					else
+						empreinte = new String(keccak.digest(buff.toString().getBytes()));
+					
+					FileOutputStream fos = new FileOutputStream(new File(cheminEmpreinte));
+					
 					fos.write(empreinte.getBytes());
 
 				} catch (NoSuchAlgorithmException e) {
@@ -320,8 +356,8 @@ public class ProviderService {
 					return null;
 				}
 				SecretKey keyTemp = skf.generateSecret(keySpec);
-				SecretKey secret = new SecretKeySpec(keyTemp.getEncoded(),
-						algoKeyGenerator);
+				SecretKey secret = new SecretKeySpec(keyTemp.getEncoded(),algoKeyGenerator);
+				
 				return secret;
 			}
 		};
@@ -363,4 +399,42 @@ public class ProviderService {
 			}
 		};
 	}
+	
+	
+	
+	public static Task<?> performChiffrement(final String algo,final File file,final Key key) {
+		return new Task<Object>() {
+			@Override
+			protected Object call() throws Exception {
+				 
+				try {
+					
+					FileInputStream fis = new FileInputStream(file);
+					
+					FileOutputStream fos = new FileOutputStream(file.getParent() + "\\" +"crypted_file");
+					
+					Chiffrement.encrypt(key, fis, fos, algo);
+					
+					updateProgress(100, 100);
+					
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (Throwable e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				return true;
+			}
+		};
+	}
+	
+	
+	
+	
+	
+	
+	
 }

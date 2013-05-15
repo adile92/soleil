@@ -187,7 +187,15 @@ public class MainController implements Initializable {
 				page = (AnchorPane) FXMLLoader.load(App.class
 						.getResource("Signature.fxml"));
 				break;
-			}
+case "Chiffrement":
+				page = (AnchorPane) FXMLLoader.load(App.class
+						.getResource("chiffrement.fxml"));
+				break;
+			
+						}
+			
+			
+			
 
 			if (splitPane.getItems().get(0) != null && page != null) {
 				splitPane.getItems().remove(0);

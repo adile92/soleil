@@ -50,8 +50,9 @@ public class TrackingServiceStub implements TrackingService {
     {
         final Map<String, ObservableList<String>> map = new TreeMap<String, ObservableList<String>>();
         projectsMap = FXCollections.observableMap(map);
-        for (String s : newList("Message Digest", "Keccak", "Key Generator", "Signature")) {
-            projectsMap.put(s, FXCollections.<String>observableArrayList());
+        
+        for (String s : newList("Message Digest", "Chiffrement", "Key Generator", "Signature")) {
+                    projectsMap.put(s, FXCollections.<String>observableArrayList());
         }
     }
 

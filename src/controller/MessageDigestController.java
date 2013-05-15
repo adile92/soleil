@@ -37,10 +37,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import org.apache.log4j.Logger;
-
-import appender.GuiAppender;
-
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -50,14 +46,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
-import main.App;
 import main.ProviderService;
+
+import org.apache.log4j.Logger;
+
+import appender.GuiAppender;
 
 public class MessageDigestController implements Initializable {
 	
@@ -73,7 +71,7 @@ public class MessageDigestController implements Initializable {
     TextArea empreinteArea;
     
     @FXML 
-    Label fichierSortie;
+    TextField fichierSortie;
     
     @FXML
     ChoiceBox<String> algoList;
@@ -92,7 +90,7 @@ public class MessageDigestController implements Initializable {
     	logger.info(this.getClass().getSimpleName() + ".initialize");
         
         
-        algoList.setItems(FXCollections.observableArrayList(ProviderService.algo()));
+        algoList.setItems(FXCollections.observableArrayList(ProviderService.algoMD()));
         // on set le 1er de la list comme valeur par defaut
         algoList.getSelectionModel().select(0);
         
@@ -112,11 +110,13 @@ public class MessageDigestController implements Initializable {
 			
 						
 			String algo = algoList.getSelectionModel().getSelectedItem();
-			final String cheminEmpreinte = file.getParent() + "/" + "empreinte.txt";
+			final String cheminEmpreinte = file.getParent() + "\\" + "empreinte.txt";
 			
 			final Task performMessageDigest  = ProviderService.performMessageDigest(algo, file,cheminEmpreinte);
 			
 			progress.progressProperty().bind(performMessageDigest.progressProperty());
+			
+			logger.info("Message digest Algo : "+algo+" en cours");
 			
 			new Thread(performMessageDigest).start();
 			fichierSortie.setText("En cours ...");
@@ -129,6 +129,7 @@ public class MessageDigestController implements Initializable {
 					
 					FileInputStream empreinteStream;
 					try {
+						String algo = algoList.getSelectionModel().getSelectedItem();
 						empreinteStream = new FileInputStream(cheminEmpreinte);
 						byte[] b = new byte[empreinteStream.available()];
 						empreinteStream.read(b, 0, empreinteStream.available());
@@ -137,6 +138,7 @@ public class MessageDigestController implements Initializable {
 						
 						fichierSortie.setText(cheminEmpreinte);
 						empreinteArea.setText(empreinte);
+						logger.info("Message digest Algo : "+algo+" fini");
 						
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
