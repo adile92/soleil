@@ -79,9 +79,6 @@ public class KeyGeneratorController implements Initializable {
 	ProgressBar progress;
 
 	@FXML
-	ChoiceBox<KeyFactory> factoryList;
-
-	@FXML
 	ChoiceBox<Integer> certificateLonger;
 
 	@FXML
@@ -90,33 +87,13 @@ public class KeyGeneratorController implements Initializable {
 	@FXML
 	CheckBox checkCertificate;
 
-	@FXML
-	TextField paddingSize;
-
+	
 	@FXML
 	TextField keySize;
 
-	@FXML
-	TextField paddingValue;
-
-	@FXML
-	TextField password;
 
 	@FXML
 	TextField nbBits;
-
-	@FXML
-	Label factory;
-
-	@FXML
-	Label passwordLb;
-
-	@FXML
-	Label padding;
-
-	@FXML
-	Label paddingSizeLb;
-
 	@FXML
 	Label lbCertifAlgo;
 
@@ -161,11 +138,6 @@ public class KeyGeneratorController implements Initializable {
 		// on set le 1er de la list comme valeur par defaut
 		algoList.getSelectionModel().select(0);
 
-		factoryList.setItems(FXCollections.observableArrayList(KeyFactory
-				.values()));
-		// on set le 1er de la list comme valeur par defaut
-		factoryList.getSelectionModel().select(0);
-
 		nbBitsLb.setVisible(false);
 		nbBits.setVisible(false);
 		certificateLonger.setVisible(false);
@@ -184,18 +156,6 @@ public class KeyGeneratorController implements Initializable {
 									.observableArrayList(ProviderService
 											.cleAlgoGenerationSymetrique()));
 							algoList.getSelectionModel().select(0);
-							certificateLonger.setLayoutY(190);
-							certificateAlgo.setLayoutY(190);
-							checkCertificate.setLayoutY(190);
-							lbCertifAlgo.setLayoutY(190);
-							factoryList.setVisible(true);
-							password.setVisible(true);
-							paddingValue.setVisible(true);
-							factory.setVisible(true);
-							passwordLb.setVisible(true);
-							padding.setVisible(true);
-							paddingSizeLb.setVisible(true);
-							paddingSize.setVisible(true);
 							keySize.setVisible(true);
 							keySizeLb.setVisible(true);
 							certificateLonger.setVisible(false);
@@ -213,23 +173,10 @@ public class KeyGeneratorController implements Initializable {
 											.cleAlgoGenerationAssymetrique()));
 							algoList.getSelectionModel().select(0);
 							lbCertifAlgo.setVisible(true);
-							lbCertifAlgo.setLayoutY(85);
 							lbDuree.setVisible(true);
-							lbDuree.setLayoutY(85);
 							certificateLonger.setVisible(true);
-							certificateLonger.setLayoutY(85);
 							certificateAlgo.setVisible(true);
-							certificateAlgo.setLayoutY(85);
 							checkCertificate.setVisible(true);
-							checkCertificate.setLayoutY(85);
-							factoryList.setVisible(false);
-							password.setVisible(false);
-							paddingValue.setVisible(false);
-							factory.setVisible(false);
-							passwordLb.setVisible(false);
-							padding.setVisible(false);
-							paddingSizeLb.setVisible(false);
-							paddingSize.setVisible(false);
 							keySize.setVisible(false);
 							keySizeLb.setVisible(false);
 							nbBitsLb.setVisible(true);
@@ -392,20 +339,11 @@ public class KeyGeneratorController implements Initializable {
 	private void executeSecretKey() throws IOException {
 		try {
 			String algo = this.algoList.getSelectionModel().getSelectedItem();
-			KeyFactory factory = this.factoryList.getSelectionModel()
-					.getSelectedItem();
 			Integer keySize = (this.keySize.getText() == null || this.keySize
 					.getText().isEmpty()) ? null : Integer
 					.parseInt(this.keySize.getText());
-			String password = this.password.getText();
-			String paddingValue = this.paddingValue.getText();
-			Integer paddingSize = (this.paddingSize.getText() == null || this.paddingSize
-					.getText().isEmpty()) ? ITERATION_COUNT : Integer
-					.parseInt(this.paddingSize.getText());
-
 			logger.info("En cours ...");
-			Task task = ProviderService.getSecretKey(algo, factory, keySize,
-					password, paddingValue, paddingSize);
+			Task task = ProviderService.getSecretKey(algo,keySize);
 			new Thread(task).start();
 			task.setOnSucceeded(new EventHandler<Event>() {
 

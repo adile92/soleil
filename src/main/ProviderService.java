@@ -60,7 +60,8 @@ import fr.cryptohash.Digest;
 public class ProviderService {
 
 	private static final MyProvider provider = new MyProvider();
-	final static int MAXREAD = 1048576 * 100;  
+	final static int MAXREAD = 1048576 * 100;
+
 	/**
 	 * retourne la liste des algo dispo
 	 * 
@@ -81,16 +82,16 @@ public class ProviderService {
 
 		return list.toArray(new String[list.size()]);
 	}
-	
+
 	public static String[] algoChiffrement() {
 		List<String> list = new ArrayList<>();
-		
+
 		for (SymetricKey cle : SymetricKey.values()) {
 			list.add(cle.name());
 		}
-		
+
 		return list.toArray(new String[list.size()]);
-		
+
 	}
 
 	public static String[] cleAlgoGenerationSymetrique() {
@@ -115,27 +116,28 @@ public class ProviderService {
 
 	}
 
-	public static Task<?> performMessageDigest(final String algo,final File file, final String cheminEmpreinte) {
+	public static Task<?> performMessageDigest(final String algo,
+			final File file, final String cheminEmpreinte) {
 		return new Task<Object>() {
 			@Override
 			protected Object call() throws Exception {
-				MessageDigest md 	= null;
-				Digest keccak		= null;
-				boolean keccakOrNot	= false;
-				
+				MessageDigest md = null;
+				Digest keccak = null;
+				boolean keccakOrNot = false;
+
 				StringBuffer buff = new StringBuffer();
 				try {
 					FileInputStream fis = new FileInputStream(file);
 
 					int tailleContent = fis.available();
-					
-					if(algo.startsWith("Keccak")){
+
+					if (algo.startsWith("Keccak")) {
 						keccakOrNot = true;
-						int version = Integer.valueOf(algo.substring(algo.length()-3, algo.length()));
-						
+						int version = Integer.valueOf(algo.substring(
+								algo.length() - 3, algo.length()));
+
 						keccak = provider.getKeccak(version);
-					}
-					else
+					} else
 						md = provider.getMessageDigest(algo);
 
 					int content;
@@ -146,14 +148,17 @@ public class ProviderService {
 					}
 
 					String empreinte;
-					
-					if(!keccakOrNot)
-						empreinte = new String(md.digest(buff.toString().getBytes()));
+
+					if (!keccakOrNot)
+						empreinte = new String(md.digest(buff.toString()
+								.getBytes()));
 					else
-						empreinte = new String(keccak.digest(buff.toString().getBytes()));
-					
-					FileOutputStream fos = new FileOutputStream(new File(cheminEmpreinte));
-					
+						empreinte = new String(keccak.digest(buff.toString()
+								.getBytes()));
+
+					FileOutputStream fos = new FileOutputStream(new File(
+							cheminEmpreinte));
+
 					fos.write(empreinte.getBytes());
 
 				} catch (NoSuchAlgorithmException e) {
@@ -281,87 +286,22 @@ public class ProviderService {
 	}
 
 	public static Task<SecretKey> getSecretKey(final String algoKeyGenerator,
-			final KeyFactory factoryAlgo, final Integer keyLenght,
-			final String password, final String paddingValue,
-			final Integer iterationCount) throws InvalidKeySpecException,
-			NoSuchAlgorithmException, InvalidKeyException {
+			final Integer keyLenght)
+			throws InvalidKeySpecException, NoSuchAlgorithmException,
+			InvalidKeyException {
 
 		return new Task<SecretKey>() {
 
 			@Override
 			protected SecretKey call() throws Exception {
 
-				KeyGenerator kg = null;
-				KeySpec keySpec = null;
-				SecretKey key;
-				SecretKeyFactory skf = null;
-
-				byte[] padding = null;
-				if (paddingValue != null && !paddingValue.isEmpty()) {
-					padding = paddingValue.getBytes();
+				KeyGenerator kg = KeyGenerator.getInstance(algoKeyGenerator);
+				if (keyLenght != null) {
+					kg.init(keyLenght, new SecureRandom());
 				} else {
-					SecureRandom saltRand = new SecureRandom(new byte[] { 1, 2,
-							3, 4 });
-					byte[] salt = new byte[16];
-					saltRand.nextBytes(salt);
-					padding = salt;
-
-				}
-				System.out.println(factoryAlgo);
-				switch (factoryAlgo) {
-				// autre
-
-				case DES:
-					kg = KeyGenerator.getInstance(factoryAlgo.name());
 					kg.init(new SecureRandom());
-
-					key = kg.generateKey();
-					skf = SecretKeyFactory.getInstance(factoryAlgo.name());
-					keySpec = new DESKeySpec(key.getEncoded());
-					break;
-				case DESede:
-					System.out.println(keyLenght);
-					kg = KeyGenerator.getInstance(factoryAlgo.name());
-					if (keyLenght == null) {
-						kg.init(new SecureRandom());
-					} else {
-						kg.init(keyLenght, new SecureRandom());
-					}
-					key = kg.generateKey();
-					skf = SecretKeyFactory.getInstance(factoryAlgo.name());
-					keySpec = (DESedeKeySpec) skf.getKeySpec(key,
-							DESedeKeySpec.class);
-
-					break;
-				case PBEWithMD5AndDES:
-				case PBEWithMD5AndTripleDES:
-				case PBEWithSHA1AndDESede:
-				case PBEWithSHA1AndRC2_40:
-				case PBKDF2WithHmacSHA1:
-
-					skf = SecretKeyFactory.getInstance(factoryAlgo.name());
-					if (keyLenght != null && keyLenght > 0) {
-						keySpec = new PBEKeySpec(password.toCharArray(),
-								padding, iterationCount, keyLenght);
-					} else {
-						keySpec = new PBEKeySpec(password.toCharArray(),
-								padding, iterationCount);
-					}
-					break;
-				default:
-					// skf = SecretKeyFactory.getInstance("DES");
-					// return keySpec = new
-					// SecretKeySpec(password.getBytes("UTF-8"),
-					// factoryAlgo.name());
-					break;
 				}
-				if (skf == null) {
-					return null;
-				}
-				SecretKey keyTemp = skf.generateSecret(keySpec);
-				SecretKey secret = new SecretKeySpec(keyTemp.getEncoded(),algoKeyGenerator);
-				
-				return secret;
+				return kg.generateKey();
 			}
 		};
 	}
@@ -401,24 +341,24 @@ public class ProviderService {
 			}
 		};
 	}
-	
-	
-	
-	public static Task<?> performChiffrement(final String algo,final File file,final Key key) {
+
+	public static Task<?> performChiffrement(final String algo,
+			final File file, final Key key) {
 		return new Task<Object>() {
 			@Override
 			protected Object call() throws Exception {
-				 
+
 				try {
-					
+
 					FileInputStream fis = new FileInputStream(file);
-					
-					FileOutputStream fos = new FileOutputStream(file.getParent() + "\\" +"crypted_file");
-					
-					Chiffrement.encrypt(key, fis, fos, algo);
-					
+
+					FileOutputStream fos = new FileOutputStream(
+							file.getParent() + "\\" + "crypted_file");
+
+					Chiffrement.encrypt(key, fis, fos, key.getAlgorithm());
+
 					updateProgress(100, 100);
-					
+
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -432,11 +372,5 @@ public class ProviderService {
 			}
 		};
 	}
-	
-	
-	
-	
-	
-	
-	
+
 }
