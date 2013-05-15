@@ -432,7 +432,7 @@ public class KeyGeneratorController implements Initializable {
 				logger.info("Error to generate secret key : SecretKey instance is null");
 			}
 		} catch (Exception e) {
-
+e.printStackTrace();
 			logger.info(e.getMessage());
 		}
 	}

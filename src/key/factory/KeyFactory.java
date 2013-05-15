@@ -1,7 +1,6 @@
 package key.factory;
 
 public enum KeyFactory {
-	AES,
 	DES, 
 	DESede, 
 	PBEWithMD5AndDES,

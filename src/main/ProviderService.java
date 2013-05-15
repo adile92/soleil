@@ -217,7 +217,7 @@ public class ProviderService {
 				Date to;
 				if (days == null) {
 					to = new Date(from.getTime() + 30 * 86400000l);
-				}else{
+				} else {
 					to = new Date(from.getTime() + days * 86400000l);
 				}
 				CertificateValidity interval = new CertificateValidity(from, to);
@@ -307,7 +307,7 @@ public class ProviderService {
 					padding = salt;
 
 				}
-
+				System.out.println(factoryAlgo);
 				switch (factoryAlgo) {
 				// autre
 
@@ -322,8 +322,11 @@ public class ProviderService {
 				case DESede:
 					System.out.println(keyLenght);
 					kg = KeyGenerator.getInstance(factoryAlgo.name());
-					kg.init(keyLenght, new SecureRandom());
-
+					if (keyLenght == null) {
+						kg.init(new SecureRandom());
+					} else {
+						kg.init(keyLenght, new SecureRandom());
+					}
 					key = kg.generateKey();
 					skf = SecretKeyFactory.getInstance(factoryAlgo.name());
 					keySpec = (DESedeKeySpec) skf.getKeySpec(key,
@@ -381,11 +384,10 @@ public class ProviderService {
 			}
 		};
 	}
-	
-	
-	public static Task<byte[]> getSignature(final byte[] datas,final PrivateKey privateKey,
-			final Signature signature) throws NoSuchAlgorithmException,
-			NoSuchProviderException {
+
+	public static Task<byte[]> getSignature(final byte[] datas,
+			final PrivateKey privateKey, final Signature signature)
+			throws NoSuchAlgorithmException, NoSuchProviderException {
 		// Get the public/private key pair
 		return new Task<byte[]>() {
 
@@ -395,7 +397,7 @@ public class ProviderService {
 
 				/* Update and sign the data */
 				signature.update(datas);
-				return  signature.sign();
+				return signature.sign();
 			}
 		};
 	}
