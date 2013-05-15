@@ -15,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
+import java.security.Signature;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
@@ -341,6 +342,24 @@ public class ProviderService {
 				keyGen.initialize(numBits, random);
 				KeyPair keyPair = keyGen.generateKeyPair();
 				return keyPair;
+			}
+		};
+	}
+	
+	
+	public static Task<byte[]> getSignature(final byte[] datas,final PrivateKey privateKey,
+			final Signature signature) throws NoSuchAlgorithmException,
+			NoSuchProviderException {
+		// Get the public/private key pair
+		return new Task<byte[]>() {
+
+			@Override
+			protected byte[] call() throws Exception {
+				signature.initSign(privateKey);
+
+				/* Update and sign the data */
+				signature.update(datas);
+				return  signature.sign();
 			}
 		};
 	}

@@ -311,23 +311,27 @@ public class KeyGeneratorController implements Initializable {
 
 				PrivateKey privKey = keyPair.getPrivate();
 				PublicKey pubKey = keyPair.getPublic();
+				
+				
 				// Store the keys
-				byte[] pkey = pubKey.getEncoded();
 				File file = new File(algo + "_publicKey.pbk");
 				FileOutputStream keyfos = new FileOutputStream(file);
+				ObjectOutputStream oos = new ObjectOutputStream(keyfos);
 				String pathPublicKey = file.getCanonicalPath();
-				keyfos.write(pkey);
-				keyfos.close();
+				oos.writeObject(pubKey);
+				oos.close();
 
-				pkey = privKey.getEncoded();
+
 				file = new File(algo + "_privateKey.pvk");
 				keyfos = new FileOutputStream(file);
+				oos = new ObjectOutputStream(keyfos);
 				String pathPrivateKey = file.getCanonicalPath();
-				keyfos.write(pkey);
+				oos.writeObject(privKey);
 				keyfos.close();
+				oos.close();
 				Task taskCertificate = null;
 				String pathCertif = null;
-				byte[] certif = null;
+				X509Certificate certif = null;
 				if (okClicked && checkCertificate.selectedProperty().getValue()) {
 					taskCertificate = ProviderService.generateCertificate(
 							certificate, keyPair, certificateLonger
@@ -347,13 +351,15 @@ public class KeyGeneratorController implements Initializable {
 
 					});
 
-					certif = ((X509Certificate) taskCertificate.get())
-							.getEncoded();
+					certif = ((X509Certificate) taskCertificate.get());
 					File certifFile = new File(algo + "_certificate.cer");
 					FileOutputStream certifFos = new FileOutputStream(file);
-					pathCertif = certifFile.getCanonicalPath();
-					certifFos.write(certif);
+					oos = new ObjectOutputStream(certifFos);
+					oos.writeObject(certif);
 					certifFos.close();
+					oos.close();
+					pathCertif = certifFile.getCanonicalPath();
+					
 				}
 
 				String value = "Private key : "
@@ -361,7 +367,7 @@ public class KeyGeneratorController implements Initializable {
 						+ "Public key : " + new String(pubKey.getEncoded());
 
 				if (certif != null) {
-					value += "\n\nCertificate : " + new String(certif);
+					value += "\n\nCertificate : " + new String(certif.getEncoded());
 				}
 				this.empreinteArea.setText(value);
 
