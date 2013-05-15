@@ -77,7 +77,7 @@ public class SignatureController implements Initializable {
     	logger.info(this.getClass().getSimpleName() + ".initialize");
         
         
-        algoList.setItems(FXCollections.observableArrayList(ProviderService.algo()));
+        algoList.setItems(FXCollections.observableArrayList(ProviderService.algoMD()));
         // on set le 1er de la list comme valeur par defaut
         algoList.getSelectionModel().select(0);
         
