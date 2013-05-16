@@ -86,10 +86,8 @@ public class KeyGeneratorController implements Initializable {
 	@FXML
 	CheckBox checkCertificate;
 
-	
 	@FXML
 	TextField keySize;
-
 
 	@FXML
 	TextField nbBits;
@@ -257,8 +255,7 @@ public class KeyGeneratorController implements Initializable {
 
 				PrivateKey privKey = keyPair.getPrivate();
 				PublicKey pubKey = keyPair.getPublic();
-				
-				
+
 				// Store the keys
 				File file = new File(algo + "_publicKey.pbk");
 				FileOutputStream keyfos = new FileOutputStream(file);
@@ -266,7 +263,6 @@ public class KeyGeneratorController implements Initializable {
 				String pathPublicKey = file.getCanonicalPath();
 				oos.writeObject(pubKey);
 				oos.close();
-
 
 				file = new File(algo + "_privateKey.pvk");
 				keyfos = new FileOutputStream(file);
@@ -297,15 +293,15 @@ public class KeyGeneratorController implements Initializable {
 
 					});
 
-					certif = ((X509Certificate) taskCertificate.get());
-					File certifFile = new File(algo + "_certificate.cer");
-					FileOutputStream certifFos = new FileOutputStream(file);
-					oos = new ObjectOutputStream(certifFos);
-					oos.writeObject(certif);
-					certifFos.close();
-					oos.close();
-					pathCertif = certifFile.getCanonicalPath();
+					X509Certificate certifs = ((X509Certificate) taskCertificate.get());
 					
+					file = new File(algo + "_certificate.cer");
+					keyfos = new FileOutputStream(file);
+					oos = new ObjectOutputStream(keyfos);
+					pathCertif = file.getCanonicalPath();
+					oos.writeObject(certifs);
+					keyfos.close();
+					oos.close();
 				}
 
 				String value = "Private key : "
@@ -313,7 +309,8 @@ public class KeyGeneratorController implements Initializable {
 						+ "Public key : " + new String(pubKey.getEncoded());
 
 				if (certif != null) {
-					value += "\n\nCertificate : " + new String(certif.getEncoded());
+					value += "\n\nCertificate : "
+							+ new String(certif.getEncoded());
 				}
 				this.empreinteArea.setText(value);
 
@@ -342,7 +339,7 @@ public class KeyGeneratorController implements Initializable {
 					.getText().isEmpty()) ? null : Integer
 					.parseInt(this.keySize.getText());
 			logger.info("En cours ...");
-			Task task = ProviderService.getSecretKey(algo,keySize);
+			Task task = ProviderService.getSecretKey(algo, keySize);
 			new Thread(task).start();
 			task.setOnSucceeded(new EventHandler<Event>() {
 
@@ -369,7 +366,6 @@ public class KeyGeneratorController implements Initializable {
 				logger.info("Error to generate secret key : SecretKey instance is null");
 			}
 		} catch (Exception e) {
-e.printStackTrace();
 			logger.info(e.getMessage());
 		}
 	}
