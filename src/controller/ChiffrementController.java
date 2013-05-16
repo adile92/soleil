@@ -41,6 +41,7 @@ import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -64,6 +65,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.stage.FileChooser;
 import main.ProviderService;
 
@@ -79,7 +81,7 @@ public class ChiffrementController implements Initializable {
 	
 	private File keyFile;
 	private File clearFile;
-	
+	private boolean mode = true; // true : chiffrement - false : dechiffrement
 	
     @FXML
     SplitPane splitPane;
@@ -99,6 +101,20 @@ public class ChiffrementController implements Initializable {
     @FXML
     TextField fileChiffrement;
     
+    @FXML
+    ToggleButton choixAction;
+    
+    @FXML
+    Label labelStatus;
+    
+    @FXML
+    Label labelFichier;
+    
+    @FXML
+    Label labelMode;
+    
+    @FXML
+    Button chiffrer;
     
     /**
      * Initializes the controller class.
@@ -156,21 +172,28 @@ public class ChiffrementController implements Initializable {
 			
 			MyProvider provider = new MyProvider();
 			Key key = null;
+			Certificate cer = null;
 			try {
 				
-//				KeySpec dks = new KeySpec(readKey.getBytes());
-//				SecretKeyFactory skf = SecretKeyFactory.getInstance("DES");
-//				SecretKey desKey = skf.generateSecret(dks);
 				
-//				KeyFactory keyFactory = KeyFactory.getInstance(algo);
 				
 				FileInputStream fis = new FileInputStream(keyFile);
-//				byte[] encodedPrivateKey = new byte[(int) keyFile.length()];
-//				fis.read(encodedPrivateKey);
 				
 				
 				ObjectInputStream ois = new ObjectInputStream(fis);
-				key = (Key) ois.readObject();
+				Object obj = ois.readObject();
+				
+				if (obj instanceof Key)
+					key = (Key) obj;
+				else if (obj instanceof Certificate){
+					logger.info("On a un certificat");
+					cer = (Certificate) obj;
+					key = cer.getPublicKey();
+					logger.info("Get Key from certificat");
+				}
+					
+				
+				
 				fis.close();
 				
 				
@@ -184,29 +207,61 @@ public class ChiffrementController implements Initializable {
 				e.printStackTrace();
 			}
 			
-			final Task performChiffrement  = ProviderService.performChiffrement(key.getAlgorithm(), clearFile, key);
-			
-			progress.progressProperty().bind(performChiffrement.progressProperty());
-			
-			logger.info("Chiffrement Algo : "+key.getAlgorithm()+" en cours");
-			
-			new Thread(performChiffrement).start();
-			
-			fichierSortie.setText("En cours ...");
-			
-			final String pathFile = clearFile.getParent() + "\\" +"crypted_file";
-			
-			performChiffrement.setOnSucceeded(new EventHandler<Event>() {
-
-				@Override
-				public void handle(Event event) {
-					// TODO Auto-generated method stub
+			if(this.mode){
+				
+					final Task performChiffrement  = ProviderService.performChiffrement(key.getAlgorithm(), clearFile, key);
 					
-					fichierSortie.setText(pathFile);
-					logger.info("Chiffrement fini");
+					progress.progressProperty().bind(performChiffrement.progressProperty());
 					
-				}
-			});
+					logger.info("Chiffrement Algo : "+key.getAlgorithm()+" en cours");
+					
+					new Thread(performChiffrement).start();
+					
+					
+					fichierSortie.setText("En cours ...");
+					
+					final String pathFile = clearFile.getParent() + "\\" +"crypted_file";
+					
+					performChiffrement.setOnSucceeded(new EventHandler<Event>() {
+		
+						@Override
+						public void handle(Event event) {
+							// TODO Auto-generated method stub
+							
+							fichierSortie.setText(pathFile);
+							logger.info("Chiffrement fini");
+							
+						}
+					});
+			
+			}
+			else
+			{
+				final Task performDechiffrement  = ProviderService.performDechiffrement(key.getAlgorithm(), clearFile, key);
+				
+				progress.progressProperty().bind(performDechiffrement.progressProperty());
+				
+				logger.info("Déchiffrement Algo : "+key.getAlgorithm()+" en cours");
+				
+				new Thread(performDechiffrement).start();
+				
+				
+				fichierSortie.setText("En cours ...");
+				
+				final String pathFile = clearFile.getParent() + "\\" +"clear_file";
+				
+				performDechiffrement.setOnSucceeded(new EventHandler<Event>() {
+	
+					@Override
+					public void handle(Event event) {
+						// TODO Auto-generated method stub
+						
+						fichierSortie.setText(pathFile);
+						logger.info("Déchiffrement fini");
+						
+					}
+				});
+			}
 			
 			
 			
@@ -214,6 +269,30 @@ public class ChiffrementController implements Initializable {
 		
 	}
 	
+	
+	public void newChoixAction(ActionEvent event){
+		
+		logger.info("Changement de mode");
+		
+		if(choixAction.isSelected()){
+			
+			this.mode = false;
+			labelFichier.setText("Fichier à déchiffrer :");
+			labelStatus.setText("Déchiffrement :");
+			labelMode.setText("Mode actuel : déchiffrement");
+			chiffrer.setText("Déchiffrer");
+			
+			
+		}
+		else
+		{
+			this.mode = true;
+			labelFichier.setText("Fichier à chiffrer :");
+			labelStatus.setText("Chiffrement :");
+			labelMode.setText("Mode actuel : chiffrement");
+			chiffrer.setText("Chiffrer");
+		}
+	}
 
     
 }

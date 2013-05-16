@@ -331,8 +331,7 @@ public class ProviderService {
 		};
 	}
 
-	public static Task<?> performChiffrement(final String algo,
-			final File file, final Key key) {
+	public static Task<?> performChiffrement(final String algo,final File file, final Key key) {
 		return new Task<Object>() {
 			@Override
 			protected Object call() throws Exception {
@@ -361,5 +360,40 @@ public class ProviderService {
 			}
 		};
 	}
+	
+	public static Task<?> performDechiffrement(final String algo,final File file, final Key key) {
+		return new Task<Object>() {
+			@Override
+			protected Object call() throws Exception {
+
+				try {
+
+					FileInputStream fis = new FileInputStream(file);
+
+					FileOutputStream fos = new FileOutputStream(file.getParent() + "\\" + "clear_file");
+
+					Chiffrement.decrypt(key, fis, fos, key.getAlgorithm());
+
+					updateProgress(100, 100);
+
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (Throwable e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				return true;
+			}
+		};
+	}
+	
+	
+	
+	
+	
+	
 
 }

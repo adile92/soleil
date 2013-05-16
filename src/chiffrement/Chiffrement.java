@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
+import java.security.cert.Certificate;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -26,9 +27,6 @@ public class Chiffrement {
 
 	public static void encryptOrDecrypt(Key key, int mode, InputStream is, OutputStream os,String algo) throws Throwable {
 
-//		DESKeySpec dks = new DESKeySpec(key.getBytes());
-//		SecretKeyFactory skf = SecretKeyFactory.getInstance("DES");
-//		SecretKey desKey = skf.generateSecret(dks);
 		
 		MyProvider provider = new MyProvider();
 		
@@ -41,6 +39,33 @@ public class Chiffrement {
 			doCopy(cis, os);
 		} else if (mode == Cipher.DECRYPT_MODE) {
 			cipher.init(Cipher.DECRYPT_MODE, key);
+			CipherOutputStream cos = new CipherOutputStream(os, cipher);
+			doCopy(is, cos);
+		}
+	}
+	
+	public static void encrypt(Certificate cer, InputStream is, OutputStream os,String algo) throws Throwable {
+		encryptOrDecrypt(cer, Cipher.ENCRYPT_MODE, is, os,algo);
+	}
+
+	public static void decrypt(Certificate cer, InputStream is, OutputStream os,String algo) throws Throwable {
+		encryptOrDecrypt(cer, Cipher.DECRYPT_MODE, is, os, algo);
+	}
+
+	public static void encryptOrDecrypt(Certificate cer, int mode, InputStream is, OutputStream os,String algo) throws Throwable {
+
+		
+		MyProvider provider = new MyProvider();
+		
+		Cipher cipher = provider.getCipher(algo); // DES/ECB/PKCS5Padding for SunJCE
+		
+		
+		if (mode == Cipher.ENCRYPT_MODE) {
+			cipher.init(Cipher.ENCRYPT_MODE, cer);
+			CipherInputStream cis = new CipherInputStream(is, cipher);
+			doCopy(cis, os);
+		} else if (mode == Cipher.DECRYPT_MODE) {
+			cipher.init(Cipher.DECRYPT_MODE, cer);
 			CipherOutputStream cos = new CipherOutputStream(os, cipher);
 			doCopy(is, cos);
 		}
