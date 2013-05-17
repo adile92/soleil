@@ -1,7 +1,7 @@
 package certificate;
 
 public enum CertificateAlgorithm {
-		DH ,
+	DH ,
 	DH_PKIX ,
 	DSA ,
 	DSA_OIW ,

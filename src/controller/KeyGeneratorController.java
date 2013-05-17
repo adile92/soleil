@@ -40,10 +40,11 @@ import javax.crypto.SecretKey;
 
 import key.generator.TypeCle;
 import main.App;
-import main.ProviderService;
 import model.Certificate;
 
 import org.apache.log4j.Logger;
+
+import service.ProviderService;
 
 import appender.GuiAppender;
 import certificate.CertificateAlgorithm;

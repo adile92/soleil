@@ -1,0 +1,41 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:amq="http://activemq.apache.org/schema/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" />
+
+	<broker xmlns="http://activemq.apache.org/schema/core"
+		persistent="false" brokerName="dynamic-broker1" useJmx="false">
+
+		<!-- Configure network connector to use multicast protocol on group onlythebrave -->
+		<networkConnectors>
+			<!-- networkTTL : spécifie le nombre de brokers que peut traverser un 
+				message pour atteindre un consommateur -->
+			<!-- prefetchSize : indique le nombre de messages à récupérer par un broker -->
+			<!-- decreaseNetworkConsumerPriority : permet de considérer les consommateurs 
+				sur le broker courant avec la même priorité que les consommateurs des autres 
+				brokers -->
+			<networkConnector uri="multicast://224.1.2.3:6255?group=onlythebrave"
+				dynamicOnly="true" networkTTL="3" prefetchSize="1"
+				decreaseNetworkConsumerPriority="true" />
+		</networkConnectors>
+
+		<!-- The transport connectors ActiveMQ will listen to Configure discovery 
+			URI to use multicast protocol -->
+		<transportConnectors>
+			<!-- rebalanceClusterClients : Répartie équitablement les clients sur 
+				les brokers du cluster. Sinon lorsqu'un nouveau broker arrive dans le cluster, 
+				aucun client ne se connectera -->
+			<!-- updateClusterClients : notificationdes clients lors de l’ajout d'un 
+				broker dans le cluster -->
+			<!-- updateClusterClientsOnRemove : notification des clients lors de la 
+				suppression d'un broker dans le cluster -->
+			<transportConnector name="openwire" uri="nio://localhost:61616"
+				discoveryUri="multicast://224.1.2.3:6255?group=onlythebrave"
+				rebalanceClusterClients="true" updateClusterClients="true"
+				updateClusterClientsOnRemove="true" />
+		</transportConnectors>
+	</broker>
+</beans>

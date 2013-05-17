@@ -6,6 +6,19 @@
 	<classpathentry kind="lib" path="jfxrt.jar"/>
 	<classpathentry kind="lib" path="log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="javafx-dialogs-0.0.1.jar"/>
+	<classpathentry kind="lib" path="activemq-core-5.7.0.jar"/>
+	<classpathentry kind="lib" path="spring-core-3.0.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="spring-beans-3.0.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="spring-context-3.0.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="slf4j-api-1.7.2.jar"/>
+	<classpathentry kind="lib" path="slf4j-log4j12-1.7.2.jar"/>
+	<classpathentry kind="lib" path="xbean-spring-3.12.jar"/>
+	<classpathentry kind="lib" path="commons-logging-1.0.3.jar"/>
+	<classpathentry kind="lib" path="spring-asm-3.0.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="geronimo-jms_1.1_spec-1.1.1.jar"/>
+	<classpathentry kind="lib" path="geronimo-j2ee-management_1.1_spec-1.0.1.jar"/>
+	<classpathentry kind="lib" path="spring-expression-3.0.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="kahadb-5.7.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/lune"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

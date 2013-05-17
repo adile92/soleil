@@ -51,9 +51,10 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
-import main.ProviderService;
 
 import org.apache.log4j.Logger;
+
+import service.ProviderService;
 
 import appender.GuiAppender;
 

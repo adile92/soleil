@@ -1,4 +1,4 @@
-package main;
+package certificate;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.security.KeyPair;

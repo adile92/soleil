@@ -1,4 +1,4 @@
-package main;
+package service;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -232,21 +232,21 @@ public class ProviderService {
 				info.set(X509CertInfo.VERSION, new CertificateVersion(
 						CertificateVersion.V3));
 				AlgorithmId algo = new AlgorithmId(
-						AlgorithmId.md5WithRSAEncryption_oid);
+						AlgorithmId.RSA_oid);
 				info.set(X509CertInfo.ALGORITHM_ID, new CertificateAlgorithmId(
 						algo));
 
 				// Sign the cert to identify the algorithm that's used.
 				X509CertImpl cert = new X509CertImpl(info);
 
-				cert.sign(privkey, algorithm);
+				//cert.sign(privkey, algorithm);
 
 				// Update the algorith, and resign.
-				algo = (AlgorithmId) cert.get(X509CertImpl.SIG_ALG);
-				info.set(CertificateAlgorithmId.NAME + "."
-						+ CertificateAlgorithmId.ALGORITHM, algo);
-				cert = new X509CertImpl(info);
-				cert.sign(privkey, algorithm);
+//				algo = (AlgorithmId) cert.get(X509CertImpl.SIG_ALG);
+//				info.set(CertificateAlgorithmId.NAME + "."
+//						+ CertificateAlgorithmId.ALGORITHM, algo);
+//				cert = new X509CertImpl(info);
+//				cert.sign(privkey, algorithm);
 				return cert;
 
 				/*
