@@ -9,18 +9,19 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane id="AnchorPaneMD" styleClass="theme" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.SignatureController">
+<AnchorPane id="AnchorPaneMD" prefHeight="409.0" styleClass="theme" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.SignatureController">
   <children>
-    <ScrollPane id="ScrollPane" prefViewportHeight="319.0" prefViewportWidth="586.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <ScrollPane id="ScrollPane" prefHeight="419.0" prefViewportHeight="319.0" prefViewportWidth="586.0" AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <content>
-        <AnchorPane id="anchorPane3" fx:id="panMessageDigest">
+        <AnchorPane id="anchorPane3" fx:id="panMessageDigest" prefHeight="404.0">
           <children>
-            <Label layoutX="14.0" layoutY="23.0" text="Signature :" />
-            <Button fx:id="fileChooserDatas" layoutX="14.0" layoutY="87.0" mnemonicParsing="false" onAction="#newMdFileChooser" text="Choisir un fichier de données" />
-            <Label layoutX="14.0" layoutY="152.0" text="Fichier de sortie :" />
-            <TextArea fx:id="empreinteArea" layoutX="14.0" layoutY="214.0" prefHeight="105.0" prefWidth="572.0" wrapText="true" />
-            <Label fx:id="fichierSortie" alignment="TOP_LEFT" layoutX="119.0" layoutY="152.0" prefHeight="62.0" prefWidth="467.0" text="..." />
-            <ChoiceBox fx:id="algoList" layoutX="119.0" layoutY="53.0" prefWidth="105.0">
+            <ToggleButton fx:id="choixActionSigner" layoutX="199.0" layoutY="21.0" mnemonicParsing="false" onAction="#newChoixAction" text="Signer" />
+            <Label layoutX="14.0" layoutY="66.0" text="Signature :" />
+            <Button fx:id="fileChooserDatas" layoutX="372.0" layoutY="122.0" mnemonicParsing="false" onAction="#newMdFileChooser" text="Choisir un fichier de données" />
+            <Label layoutX="14.0" layoutY="240.0" text="Fichier de sortie :" />
+            <TextArea fx:id="empreinteArea" layoutX="14.0" layoutY="305.0" prefHeight="96.0" prefWidth="572.0" wrapText="true" />
+            <Label fx:id="fichierSortie" alignment="TOP_LEFT" layoutX="119.0" layoutY="240.0" prefHeight="62.0" prefWidth="467.0" text="..." />
+            <ChoiceBox fx:id="algoList" layoutX="119.0" layoutY="91.0" prefWidth="105.0">
               <items>
                 <FXCollections fx:factory="observableArrayList">
                   <String fx:value="Item 1" />
@@ -29,11 +30,15 @@
                 </FXCollections>
               </items>
             </ChoiceBox>
-            <Label layoutX="14.0" layoutY="56.0" text="Algorithme :" />
-            <ProgressBar fx:id="progress" layoutX="119.0" layoutY="27.0" prefWidth="312.0" progress="0.0" />
-            <Label fx:id="dataPath" layoutX="224.0" layoutY="89.0" prefHeight="23.0" prefWidth="358.0" />
-            <Button fx:id="fileChooserKey" layoutX="14.0" layoutY="120.0" mnemonicParsing="false" onAction="#newMdFileChooser" text="Choisir une clé privée" />
-            <Label id="dataPath" fx:id="keyPath" layoutX="181.0" layoutY="122.0" prefHeight="23.0" prefWidth="401.0" />
+            <Label layoutX="14.0" layoutY="94.0" text="Algorithme :" />
+            <ProgressBar fx:id="progress" layoutX="119.0" layoutY="70.0" prefWidth="312.0" progress="0.0" />
+            <Label fx:id="datasPath" layoutX="14.0" layoutY="123.0" prefHeight="23.0" prefWidth="344.0" />
+            <Button fx:id="fileChooserKey" layoutX="372.0" layoutY="153.0" mnemonicParsing="false" onAction="#newMdFileChooser" prefWidth="202.0" text="Choisir une clé privée" />
+            <Label id="dataPath" fx:id="keyPath" layoutX="14.0" layoutY="153.0" prefHeight="23.0" prefWidth="344.0" />
+            <Button fx:id="btnValidate" layoutX="231.0" layoutY="207.0" mnemonicParsing="false" onAction="#btnValidate" text="Valider" />
+            <ToggleButton fx:id="choixActionVerifier" layoutX="280.0" layoutY="21.0" mnemonicParsing="false" onAction="#newChoixAction" text="Vérifier" />
+            <Button id="fileChooserDataSign" fx:id="fileChooserDataSign" layoutX="372.0" layoutY="182.0" mnemonicParsing="false" onAction="#newMdFileChooser" prefWidth="202.0" text="Choisir un fichier signé" />
+            <Label id="dataPath" fx:id="signPath" layoutX="14.0" layoutY="182.0" prefHeight="23.0" prefWidth="344.0" />
           </children>
         </AnchorPane>
       </content>

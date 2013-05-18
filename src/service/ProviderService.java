@@ -15,6 +15,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.cert.X509Certificate;
@@ -31,6 +32,9 @@ import javax.crypto.SecretKey;
 import key.generator.AssymetricKey;
 import key.generator.SymetricKey;
 import model.Certificate;
+
+import org.apache.log4j.Logger;
+
 import sun.security.x509.AlgorithmId;
 import sun.security.x509.CertificateAlgorithmId;
 import sun.security.x509.CertificateIssuerName;
@@ -48,6 +52,9 @@ import fr.cryptohash.Digest;
 
 public class ProviderService {
 
+
+	private static Logger logger = Logger
+			.getLogger(ProviderService.class);
 	private static final MyProvider provider = new MyProvider();
 	final static int MAXREAD = 1048576 * 100;
 
@@ -151,11 +158,11 @@ public class ProviderService {
 					fos.write(empreinte.getBytes());
 
 				} catch (NoSuchAlgorithmException e) {
-					e.printStackTrace();
+					logger.error("", e); 
 				} catch (FileNotFoundException e) {
-					e.printStackTrace();
+					logger.error("", e); 
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.error("", e); 
 				}
 
 				return true;
@@ -221,6 +228,7 @@ public class ProviderService {
 						certificate.getOU(), certificate.getO(),
 						certificate.getL(), certificate.getS(),
 						certificate.getC());
+			
 				info.set(X509CertInfo.VALIDITY, interval);
 				info.set(X509CertInfo.SERIAL_NUMBER,
 						new CertificateSerialNumber(sn));
@@ -239,14 +247,8 @@ public class ProviderService {
 				// Sign the cert to identify the algorithm that's used.
 				X509CertImpl cert = new X509CertImpl(info);
 
-				//cert.sign(privkey, algorithm);
+				cert.sign(privkey, algorithm);
 
-				// Update the algorith, and resign.
-//				algo = (AlgorithmId) cert.get(X509CertImpl.SIG_ALG);
-//				info.set(CertificateAlgorithmId.NAME + "."
-//						+ CertificateAlgorithmId.ALGORITHM, algo);
-//				cert = new X509CertImpl(info);
-//				cert.sign(privkey, algorithm);
 				return cert;
 
 				/*
@@ -314,19 +316,30 @@ public class ProviderService {
 		};
 	}
 
-	public static Task<byte[]> getSignature(final byte[] datas,
-			final PrivateKey privateKey, final Signature signature)
+	public static Task<Object> getSignature(final byte[] datas, final byte[] dataSign,
+			final Key key, final Signature signature, final boolean isSigner)
 			throws NoSuchAlgorithmException, NoSuchProviderException {
 		// Get the public/private key pair
-		return new Task<byte[]>() {
+		return new Task<Object>() {
 
 			@Override
-			protected byte[] call() throws Exception {
-				signature.initSign(privateKey);
-
-				/* Update and sign the data */
+			protected Object call() throws Exception {
+				System.out.println(isSigner);
+				if(isSigner){
+				signature.initSign((PrivateKey)key);
 				signature.update(datas);
-				return signature.sign();
+				byte[] sig = signature.sign();
+				updateProgress(100, 100);
+				/* Update and sign the data */
+				return sig;
+				}else{
+					signature.initVerify((PublicKey)key);
+					signature.update(datas);
+					boolean value = signature.verify(dataSign);
+					updateProgress(100, 100);
+					return value;
+				}
+
 			}
 		};
 	}
@@ -348,12 +361,12 @@ public class ProviderService {
 					updateProgress(100, 100);
 
 				} catch (FileNotFoundException e) {
-					e.printStackTrace();
+					logger.error("", e); 
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.error("", e); 
 				} catch (Throwable e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("", e); 
 				}
 
 				return true;
@@ -377,12 +390,12 @@ public class ProviderService {
 					updateProgress(100, 100);
 
 				} catch (FileNotFoundException e) {
-					e.printStackTrace();
+					logger.error("", e); 
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.error("", e); 
 				} catch (Throwable e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("", e); 
 				}
 
 				return true;
