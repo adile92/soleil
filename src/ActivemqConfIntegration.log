@@ -1,10 +1,2 @@
-38:454 - MainController.initialize
-40:649 - KeyGeneratorController.initialize
-52:18 - En cours ...
-52:418 - Execution complete.
-59:423 - ChiffrementController.initialize
-36:428 - Choix du fichier C:\Users\BAMAKO\Desktop\Chapitre 2.pdf
-10:937 - Choix de la clé D:\Eclipse\M2\Securite\soleil\RSA_publicKey.pbk
-17:903 - chiffrement !
-17:916 - Chiffrement Algo : RSA en cours
-18:310 - Chiffrement fini
+39:547 - MainController.initialize
+42:933 - TchatController.initialize
