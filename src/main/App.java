@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import jms.BrokerLauncher;
 
 public class App extends Application {
 	
@@ -28,7 +29,7 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         try {
         	
-            
+        	BrokerLauncher.getBokerLauncher();
             
             AnchorPane page = (AnchorPane) FXMLLoader.load(App.class.getResource("IssueTrackingLite.fxml"));
             Scene scene = new Scene(page);
