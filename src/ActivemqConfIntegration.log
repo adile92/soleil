@@ -1,2 +1,49 @@
-39:547 - MainController.initialize
-42:933 - TchatController.initialize
+06:27 - Refreshing org.esiag.isidis.bdf.commons.initializer.springconf.BdfApplicationContext@6ada37aa: startup date [Sun May 19 20:20:06 CEST 2013]; root of context hierarchy
+06:94 - Loading XML bean definitions from class path resource [application-context.xml]
+06:405 - Pre-instantiating singletons in org.springframework.beans.factory.support.DefaultListableBeanFactory@62dc1805: defining beans [org.springframework.context.annotation.internalConfigurationAnnotationProcessor,org.springframework.context.annotation.internalAutowiredAnnotationProcessor,org.springframework.context.annotation.internalRequiredAnnotationProcessor,org.springframework.context.annotation.internalCommonAnnotationProcessor]; root of factory hierarchy
+06:819 - Failed to start jmx connector: Cannot bind to URL [rmi://localhost:1099/jmxrmi]: javax.naming.NameAlreadyBoundException: jmxrmi [Root exception is java.rmi.AlreadyBoundException: jmxrmi]. Will restart management to re-create jmx connector, trying to remedy this issue.
+06:840 - PListStore:[C:\Users\Adile\Documents\workspaces\soleil\activemq-data\localhost\tmp_storage] started
+06:846 - Using Persistence Adapter: KahaDBPersistenceAdapter[C:\Users\Adile\Documents\workspaces\soleil\activemq-data\localhost\KahaDB]
+06:852 - Database activemq-data\localhost\KahaDB\lock is locked... waiting 10 seconds for the database to be unlocked. Reason: java.io.IOException: File 'activemq-data\localhost\KahaDB\lock' could not be locked.
+11:409 - Database activemq-data\localhost\KahaDB\lock is locked... waiting 10 seconds for the database to be unlocked. Reason: java.io.IOException: File 'activemq-data\localhost\KahaDB\lock' could not be locked.
+11:411 - Apache ActiveMQ 5.7.0 (localhost, null) is shutting down
+11:412 - Connector tcp://localhost:61616 Stopped
+11:417 -19:212 - get private key !!
+34:342 - get public key !!
+12:841 - Schedule new message.
+12:843 - Clé public du correspondant reçu !
+19:174 - init !!
+19:380 - msg sent
+19:380 - Je suis le 1er, je crée la clé secrete
+19:402 - msg sent
+30:768 - Schedule new message.
+
+11:426 - Apache ActiveMQ 5.7.0 (localhost, null) is shutdown
+11:884 - MainController.initialize
+21:413 - Failed to start Apache ActiveMQ (localhost, null). Reason: java.io.IOException: attempt to obtain lock aborted due to shutdown
+java.io.IOException: attempt to obtain lock aborted due to shutdown
+	at org.apache.activemq.store.SharedFileLocker.doStart(SharedFileLocker.java:71)
+	at org.apache.activemq.util.ServiceSupport.start(ServiceSupport.java:55)
+	at org.apache.activemq.broker.LockableServiceSupport.preStart(LockableServiceSupport.java:84)
+	at org.apache.activemq.util.ServiceSupport.start(ServiceSupport.java:54)
+	at org.apache.activemq.broker.BrokerService.doStartPersistenceAdapter(BrokerService.java:623)
+	at org.apache.activemq.broker.BrokerService.startPersistenceAdapter(BrokerService.java:612)
+	at org.apache.activemq.broker.BrokerService.start(BrokerService.java:577)
+	at jms.BrokerLauncher.run(BrokerLauncher.java:74)
+	at java.lang.Thread.run(Thread.java:722)
+47:654 - TchatController.initialize
+47:657 - initialisation de JMS
+47:916 - Successfully connected to nio://localhost:61616
+47:994 - Successfully connected to nio://localhost:61616
+49:231 - get private key !!
+59:838 - get public key !!
+12:617 - init !!
+12:846 - msg sent
+19:388 - Schedule new message.
+19:390 - Clé public du correspondant reçu !
+19:400 - Schedule new message.
+19:454 - J'ai reçu la clé de session !
+30:757 - Envoi : toto
+30:774 - msg sent
+37:714 - Transport (null) failed, reason:  java.io.IOException: Une connexion existante a dû être fermée par l’hôte distant, attempting to automatically reconnect
+37:741 - Transport (null) failed, reason:  java.io.IOException: Une connexion existante a dû être fermée par l’hôte distant, attempting to automatically reconnect

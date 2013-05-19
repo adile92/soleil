@@ -4,6 +4,7 @@ package main;
 //import java.util.logging.Logger;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.esiag.isidis.bdf.commons.initializer.utils.SpringUtils;
 
 import controller.MainController;
 
@@ -29,6 +30,7 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         try {
         	
+        	SpringUtils.initBdfContext("application-context.xml","jms_messages.properties");
         	BrokerLauncher.getBokerLauncher();
             
             AnchorPane page = (AnchorPane) FXMLLoader.load(App.class.getResource("IssueTrackingLite.fxml"));

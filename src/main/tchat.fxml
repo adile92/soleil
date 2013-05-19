@@ -13,11 +13,12 @@
   <children>
     <AnchorPane prefHeight="329.0" prefWidth="594.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
-        <Button mnemonicParsing="false" prefWidth="114.0" text="Envoyer !" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="33.0" />
+        <Button fx:id="submit" mnemonicParsing="false" onAction="#submitMessage" prefWidth="114.0" text="Envoyer !" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="33.0" />
         <TextField fx:id="inputMessage" prefHeight="36.0" prefWidth="413.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="167.0" />
-        <Button mnemonicParsing="false" prefWidth="83.0" text="Clé privé" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="22.0" />
-        <Button mnemonicParsing="false" text="Clé public" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="64.0" />
-        <TextArea prefHeight="241.0" prefWidth="413.0" wrapText="true" AnchorPane.bottomAnchor="74.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="167.0" AnchorPane.topAnchor="14.0" />
+        <Button fx:id="privateKey" mnemonicParsing="false" onAction="#getPrivateKey" prefWidth="83.0" text="Clé privé" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="22.0" />
+        <Button fx:id="publicKey" mnemonicParsing="false" onAction="#getPublicKey" text="Clé public" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="64.0" />
+        <TextArea fx:id="tchat" prefHeight="241.0" prefWidth="413.0" wrapText="true" AnchorPane.bottomAnchor="74.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="167.0" AnchorPane.topAnchor="14.0" />
+        <Button mnemonicParsing="false" onAction="#initEchange" prefWidth="83.0" text="Start" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="103.0" />
       </children>
     </AnchorPane>
   </children>
