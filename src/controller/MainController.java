@@ -174,25 +174,29 @@ public class MainController implements Initializable {
 			AnchorPane page = null;
 
 			switch (name) {
+			
 			case "Message Digest":
-				page = (AnchorPane) FXMLLoader.load(App.class
-						.getResource("messageDigest.fxml"));
+				page = (AnchorPane) FXMLLoader.load(App.class.getResource("messageDigest.fxml"));
 				break;
+				
 			case "Key Generator":
-				page = (AnchorPane) FXMLLoader.load(App.class
-						.getResource("keyGenerator.fxml"));
+				page = (AnchorPane) FXMLLoader.load(App.class.getResource("keyGenerator.fxml"));
 				break;
 
 			case "Signature":
-				page = (AnchorPane) FXMLLoader.load(App.class
-						.getResource("Signature.fxml"));
+				page = (AnchorPane) FXMLLoader.load(App.class.getResource("Signature.fxml"));
 				break;
-case "Chiffrement":
-				page = (AnchorPane) FXMLLoader.load(App.class
-						.getResource("chiffrement.fxml"));
+				
+			case "Chiffrement":
+				page = (AnchorPane) FXMLLoader.load(App.class.getResource("chiffrement.fxml"));
 				break;
+				
+			case "Tchat !":
+				page = (AnchorPane) FXMLLoader.load(App.class.getResource("tchat.fxml"));
+				break;
+				
 			
-						}
+			}
 			
 			
 			

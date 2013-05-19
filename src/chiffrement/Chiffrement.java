@@ -3,18 +3,13 @@ package chiffrement;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
-import java.security.cert.Certificate;
 
 import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
-import javax.crypto.spec.SecretKeySpec;
 
-import main.ProviderService;
+import com.sun.media.jfxmedia.logging.Logger;
 
 import edu.esiag.isidis.security.provider.MyProvider;
 
@@ -38,8 +33,9 @@ public class Chiffrement {
 		
 		InputStream in 	= new FileInputStream(fileIn);
 		OutputStream out = new FileOutputStream(fileOut);
-		
-		  int blockSize = (2048 / 8) - 11;
+		 
+		 int blockSize = cipher.getBlockSize();
+//		  int blockSize = (2048 / 8) - 11;
 	      int outputSize = cipher.getOutputSize(blockSize);
 	      byte[] inBytes = new byte[blockSize];
 	      byte[] outBytes = new byte[outputSize];

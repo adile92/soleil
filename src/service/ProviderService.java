@@ -344,29 +344,25 @@ public class ProviderService {
 		};
 	}
 
-	public static Task<?> performChiffrement(final String algo,final File file, final Key key) {
+	public static Task<?> performChiffrement(final File file, final File destination, final Key key) {
 		return new Task<Object>() {
 			@Override
 			protected Object call() throws Exception {
 
 				try {
 
-					FileInputStream fis = new FileInputStream(file);
 
-					FileOutputStream fos = new FileOutputStream(
-							file.getParent() + "\\" + "crypted_file");
-
-					Chiffrement.encrypt(key, fis, fos, key.getAlgorithm());
+					Chiffrement.encrypt(key, file,destination);
 
 					updateProgress(100, 100);
 
 				} catch (FileNotFoundException e) {
-					logger.error("", e); 
+					e.printStackTrace();
 				} catch (IOException e) {
-					logger.error("", e); 
+					e.printStackTrace();
 				} catch (Throwable e) {
 					// TODO Auto-generated catch block
-					logger.error("", e); 
+					e.printStackTrace();
 				}
 
 				return true;
@@ -374,28 +370,25 @@ public class ProviderService {
 		};
 	}
 	
-	public static Task<?> performDechiffrement(final String algo,final File file, final Key key) {
+	public static Task<?> performDechiffrement(final File source, final File destination, final Key key) {
 		return new Task<Object>() {
 			@Override
 			protected Object call() throws Exception {
 
 				try {
 
-					FileInputStream fis = new FileInputStream(file);
-
-					FileOutputStream fos = new FileOutputStream(file.getParent() + "\\" + "clear_file");
-
-					Chiffrement.decrypt(key, fis, fos, key.getAlgorithm());
+					
+					Chiffrement.decrypt(key, source, destination);
 
 					updateProgress(100, 100);
 
 				} catch (FileNotFoundException e) {
-					logger.error("", e); 
+					e.printStackTrace();
 				} catch (IOException e) {
-					logger.error("", e); 
+					e.printStackTrace();
 				} catch (Throwable e) {
 					// TODO Auto-generated catch block
-					logger.error("", e); 
+					e.printStackTrace();
 				}
 
 				return true;
