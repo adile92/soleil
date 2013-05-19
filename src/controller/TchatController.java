@@ -242,7 +242,9 @@ public class TchatController implements Initializable {
 	    	logger.info("Envoi : "+inputMessage.getText());
 	    	
 	    	try {
-				writer.send(writer.createTextMessage(inputMessage.getText()));
+	    		
+				writer.send(writer.createTextMessage(cryptedMessage));
+				
 			} catch (JMSException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
