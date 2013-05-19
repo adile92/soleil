@@ -37,8 +37,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.URL;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
+import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
@@ -47,6 +49,10 @@ import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ResourceBundle;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.SecretKeySpec;
@@ -164,7 +170,6 @@ public class ChiffrementController implements Initializable {
 	@SuppressWarnings("unchecked")
 	public void newCipherCrypt(ActionEvent event){
 		
-		logger.info("chiffrement !");
 		
 		if (clearFile != null) {
 			
@@ -185,16 +190,14 @@ public class ChiffrementController implements Initializable {
 				
 				if (obj instanceof Key)
 					key = (Key) obj;
-				else if (obj instanceof Certificate){
-					logger.info("On a un certificat");
-					cer = (Certificate) obj;
-					key = cer.getPublicKey();
-					logger.info("Get Key from certificat");
-				}
 					
 				
-				
 				fis.close();
+				
+//				KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+//		        keyGen.initialize(512);
+//		        key = keyGen.generateKeyPair().getPublic();
+				
 				
 				
 				
@@ -208,8 +211,11 @@ public class ChiffrementController implements Initializable {
 			}
 			
 			if(this.mode){
+					
+					final String pathFile = clearFile.getParent() + "\\" +"crypted_file";
+					File destination = new File(pathFile);
 				
-					final Task performChiffrement  = ProviderService.performChiffrement(key.getAlgorithm(), clearFile, key);
+					final Task performChiffrement  = ProviderService.performChiffrement(clearFile,destination, key);
 					
 					progress.progressProperty().bind(performChiffrement.progressProperty());
 					
@@ -220,7 +226,7 @@ public class ChiffrementController implements Initializable {
 					
 					fichierSortie.setText("En cours ...");
 					
-					final String pathFile = clearFile.getParent() + "\\" +"crypted_file";
+					
 					
 					performChiffrement.setOnSucceeded(new EventHandler<Event>() {
 		
@@ -237,7 +243,12 @@ public class ChiffrementController implements Initializable {
 			}
 			else
 			{
-				final Task performDechiffrement  = ProviderService.performDechiffrement(key.getAlgorithm(), clearFile, key);
+				logger.debug("dechiffrement mode !");
+				final String pathFile = clearFile.getParent() + "\\" +"clear_file";
+				
+				File destination = new File(pathFile);
+				
+				final Task performDechiffrement  = ProviderService.performDechiffrement(clearFile,destination, key);
 				
 				progress.progressProperty().bind(performDechiffrement.progressProperty());
 				
@@ -248,7 +259,7 @@ public class ChiffrementController implements Initializable {
 				
 				fichierSortie.setText("En cours ...");
 				
-				final String pathFile = clearFile.getParent() + "\\" +"clear_file";
+				
 				
 				performDechiffrement.setOnSucceeded(new EventHandler<Event>() {
 	

@@ -1,5 +1,8 @@
 package chiffrement;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,68 +20,50 @@ import edu.esiag.isidis.security.provider.MyProvider;
 
 public class Chiffrement {
 	
-	public static void encrypt(Key key, InputStream is, OutputStream os,String algo) throws Throwable {
-		encryptOrDecrypt(key, Cipher.ENCRYPT_MODE, is, os,algo);
+	private static MyProvider provider = new MyProvider();
+	
+	public static void encrypt(Key key,File is, File os) throws Throwable {
+		Cipher cipher = provider.getCipher(key.getAlgorithm());
+		cipher.init(Cipher.ENCRYPT_MODE, key);
+		encryptOrDecrypt(is, os, cipher);
 	}
 
-	public static void decrypt(Key key, InputStream is, OutputStream os,String algo) throws Throwable {
-		encryptOrDecrypt(key, Cipher.DECRYPT_MODE, is, os, algo);
+	public static void decrypt(Key key,File is, File os) throws Throwable {
+		Cipher cipher = provider.getCipher(key.getAlgorithm());
+		cipher.init(Cipher.DECRYPT_MODE, key);
+		encryptOrDecrypt(is, os,cipher);
 	}
 
-	public static void encryptOrDecrypt(Key key, int mode, InputStream is, OutputStream os,String algo) throws Throwable {
+	public static void encryptOrDecrypt(File fileIn, File fileOut,Cipher cipher) throws Throwable {
+		
+		InputStream in 	= new FileInputStream(fileIn);
+		OutputStream out = new FileOutputStream(fileOut);
+		
+		  int blockSize = (2048 / 8) - 11;
+	      int outputSize = cipher.getOutputSize(blockSize);
+	      byte[] inBytes = new byte[blockSize];
+	      byte[] outBytes = new byte[outputSize];
 
-		
-		MyProvider provider = new MyProvider();
-		
-		Cipher cipher = provider.getCipher(algo); // DES/ECB/PKCS5Padding for SunJCE
-		
-		
-		if (mode == Cipher.ENCRYPT_MODE) {
-			cipher.init(Cipher.ENCRYPT_MODE, key);
-			CipherInputStream cis = new CipherInputStream(is, cipher);
-			doCopy(cis, os);
-		} else if (mode == Cipher.DECRYPT_MODE) {
-			cipher.init(Cipher.DECRYPT_MODE, key);
-			CipherOutputStream cos = new CipherOutputStream(os, cipher);
-			doCopy(is, cos);
-		}
+	      int inLength = 0;
+	      boolean more = true;
+	      while (more)
+	      {
+	         inLength = in.read(inBytes);
+	         if (inLength == blockSize)
+	         {
+	            int outLength = cipher.update(inBytes, 0, blockSize, outBytes);
+	            out.write(outBytes, 0, outLength);
+	         }
+	         else more = false;
+	      }
+	      if (inLength > 0) outBytes = cipher.doFinal(inBytes, 0, inLength);
+	      else outBytes = cipher.doFinal();
+	      	out.write(outBytes);
+	   
+		in.close();
+		out.close();
 	}
 	
-	public static void encrypt(Certificate cer, InputStream is, OutputStream os,String algo) throws Throwable {
-		encryptOrDecrypt(cer, Cipher.ENCRYPT_MODE, is, os,algo);
-	}
 
-	public static void decrypt(Certificate cer, InputStream is, OutputStream os,String algo) throws Throwable {
-		encryptOrDecrypt(cer, Cipher.DECRYPT_MODE, is, os, algo);
-	}
-
-	public static void encryptOrDecrypt(Certificate cer, int mode, InputStream is, OutputStream os,String algo) throws Throwable {
-
-		
-		MyProvider provider = new MyProvider();
-		
-		Cipher cipher = provider.getCipher(algo); // DES/ECB/PKCS5Padding for SunJCE
-		
-		
-		if (mode == Cipher.ENCRYPT_MODE) {
-			cipher.init(Cipher.ENCRYPT_MODE, cer);
-			CipherInputStream cis = new CipherInputStream(is, cipher);
-			doCopy(cis, os);
-		} else if (mode == Cipher.DECRYPT_MODE) {
-			cipher.init(Cipher.DECRYPT_MODE, cer);
-			CipherOutputStream cos = new CipherOutputStream(os, cipher);
-			doCopy(is, cos);
-		}
-	}
-
-	public static void doCopy(InputStream is, OutputStream os) throws IOException {
-		byte[] bytes = new byte[64];
-		int numBytes;
-		while ((numBytes = is.read(bytes)) != -1) {
-			os.write(bytes, 0, numBytes);
-		}
-		os.flush();
-		os.close();
-		is.close();
-	}
+	
 }
