@@ -5,6 +5,7 @@ package main;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.esiag.isidis.bdf.commons.initializer.utils.SpringUtils;
+import org.esiag.isidis.bdf.commons.jms.BrokerLauncher;
 
 import controller.MainController;
 
@@ -14,7 +15,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import jms.BrokerLauncher;
 
 public class App extends Application {
 	

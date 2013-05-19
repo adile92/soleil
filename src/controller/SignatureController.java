@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -17,7 +16,6 @@ import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -32,8 +30,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.stage.FileChooser;
 
 import org.apache.log4j.Logger;
-
-import com.sun.corba.se.impl.ior.ByteBuffer;
 
 import service.ProviderService;
 import appender.GuiAppender;
@@ -148,15 +144,8 @@ public class SignatureController implements Initializable {
 		byte[] datas = (byte[]) getContent(chooserDatasFile);
 		Key key = (Key) getObjectContent(chooserKeyFile);
 		byte[] dataSign = (byte[]) getContent(chooserDataSignFile);
-//		if(chooserDataSignFile != null){
-//		 FileInputStream sigfis = new FileInputStream(chooserDataSignFile);
-//		 dataSign = new byte[sigfis.available()]; 
-//         sigfis.read(dataSign);
-//
-//         sigfis.close();
-//		}
 
-		final Task performSignature = ProviderService.getSignature(datas,
+		final Task<?> performSignature = ProviderService.getSignature(datas,
 				dataSign, key, signature, isSigner);
 
 		progress.progressProperty().bind(performSignature.progressProperty());
@@ -211,15 +200,6 @@ public class SignatureController implements Initializable {
 
          fis.close();
          return byteCode;
-		// int ch;
-		// StringBuffer strContent = new StringBuffer("");
-		// FileInputStream stream = new FileInputStream(file);
-		// while ((ch = stream.read()) != -1) {
-		// strContent.append((char) ch);
-		// }
-		// stream.close();
-		//
-		// return strContent.toString().getBytes();
 	}
 
 	private Object getObjectContent(File file) throws FileNotFoundException,

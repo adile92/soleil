@@ -1,4 +1,4 @@
-package jms;
+package org.esiag.isidis.bdf.commons.jms;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -36,9 +36,9 @@ public class BrokerLauncher implements Runnable {
 				broker.stop();
 			} catch (Exception e) {
 			}
-			System.out.println("second");
+			logger.info("Second participant au tchat.");
 		}else{
-			System.out.println("premier");
+			logger.info("Premier participant au tchat.");
 		}
 		
 	}

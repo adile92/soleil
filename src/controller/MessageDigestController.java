@@ -90,7 +90,6 @@ public class MessageDigestController implements Initializable {
         
     	logger.info(this.getClass().getSimpleName() + ".initialize");
         
-        
         algoList.setItems(FXCollections.observableArrayList(ProviderService.algoMD()));
         // on set le 1er de la list comme valeur par defaut
         algoList.getSelectionModel().select(0);
@@ -102,14 +101,10 @@ public class MessageDigestController implements Initializable {
 	public void newMdFileChooser(ActionEvent event) throws IOException {
 
 		FileChooser fileChooser = new FileChooser();
-		File file;
-		
-
-		file = fileChooser.showOpenDialog(null);
+		File file = fileChooser.showOpenDialog(null);
 		
 		if (file != null) {
-			
-						
+					
 			String algo = algoList.getSelectionModel().getSelectedItem();
 			final String cheminEmpreinte = file.getParent() + "\\" + "empreinte.txt";
 			
@@ -125,9 +120,7 @@ public class MessageDigestController implements Initializable {
 			performMessageDigest.setOnSucceeded(new EventHandler<Event>() {
 
 				@Override
-				public void handle(Event event) {
-					// TODO Auto-generated method stub
-					
+				public void handle(Event event) {					
 					FileInputStream empreinteStream;
 					try {
 						String algo = algoList.getSelectionModel().getSelectedItem();
@@ -142,18 +135,10 @@ public class MessageDigestController implements Initializable {
 						logger.info("Message digest Algo : "+algo+" fini");
 						
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
 				}
 			});
-			
-			
-			
 		}
 	}
-	
-
-    
 }

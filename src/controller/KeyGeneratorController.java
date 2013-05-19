@@ -45,7 +45,6 @@ import model.Certificate;
 import org.apache.log4j.Logger;
 
 import service.ProviderService;
-
 import appender.GuiAppender;
 import certificate.CertificateAlgorithm;
 
@@ -54,7 +53,6 @@ public class KeyGeneratorController implements Initializable {
 	private static Logger logger = Logger
 			.getLogger(KeyGeneratorController.class);
 
-	private static final int ITERATION_COUNT = 8192;
 
 	private static final int NB_DAY_MAX = 99;
 	@FXML
