@@ -109,7 +109,6 @@ public class KeyGeneratorController implements Initializable {
 	/**
 	 * Initializes the controller class.
 	 */
-	@Override
 	public void initialize(URL url, ResourceBundle rsrcs) {
 		logger.addAppender(new GuiAppender(MainController.console));
 
@@ -143,7 +142,6 @@ public class KeyGeneratorController implements Initializable {
 		lbDuree.setVisible(false);
 		typeCle.getSelectionModel().selectedItemProperty()
 				.addListener(new ChangeListener<TypeCle>() {
-					@Override
 					public void changed(
 							ObservableValue<? extends TypeCle> selected,
 							TypeCle oldFruit, TypeCle newFruit) {
@@ -242,7 +240,6 @@ public class KeyGeneratorController implements Initializable {
 
 			task.setOnSucceeded(new EventHandler<Event>() {
 
-				@Override
 				public void handle(Event arg0) {
 					logger.info("Execution complete.");
 
@@ -284,7 +281,6 @@ public class KeyGeneratorController implements Initializable {
 
 					taskCertificate.setOnSucceeded(new EventHandler<Event>() {
 
-						@Override
 						public void handle(Event arg0) {
 							logger.info("Execution complete.");
 
@@ -342,7 +338,6 @@ public class KeyGeneratorController implements Initializable {
 			new Thread(task).start();
 			task.setOnSucceeded(new EventHandler<Event>() {
 
-				@Override
 				public void handle(Event arg0) {
 					logger.info("Execution complete.");
 

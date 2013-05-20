@@ -18,13 +18,12 @@ public class GuiAppender extends AppenderSkeleton {
 		this.out = out;
 		this.setLayout(new PatternLayout("%-5p [%t]: %m%n"));
 	}
-	@Override
+
 	public void close() {
 		// TODO Auto-generated method stub
 		super.closed = true;
 	}
 
-	@Override
 	public boolean requiresLayout() {
 		// TODO Auto-generated method stub
 		return false;

@@ -9,7 +9,6 @@ import java.security.Key;
 
 import javax.crypto.Cipher;
 
-import com.sun.media.jfxmedia.logging.Logger;
 
 import edu.esiag.isidis.security.provider.MyProvider;
 

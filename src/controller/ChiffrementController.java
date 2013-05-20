@@ -173,14 +173,6 @@ public class ChiffrementController implements Initializable {
 				
 				fis.close();
 				
-//				KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-//		        keyGen.initialize(512);
-//		        key = keyGen.generateKeyPair().getPublic();
-				
-				
-				
-				
-				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -209,7 +201,6 @@ public class ChiffrementController implements Initializable {
 					
 					performChiffrement.setOnSucceeded(new EventHandler<Event>() {
 		
-						@Override
 						public void handle(Event event) {
 							// TODO Auto-generated method stub
 							
