@@ -56,8 +56,7 @@ public class TchatController implements Initializable {
 	private Writer writer;
 	private MessageConfiguration confReader;
 	private MessageConfiguration confWriter;
-	private static BdfApplicationContext context = BdfApplicationContext
-			.getInstance();
+	private static BdfApplicationContext context = BdfApplicationContext.getInstance();
 	private Key myPublicKey;
 	private Key myPrivateKey;
 	private Key otherPublicKey;
@@ -68,6 +67,7 @@ public class TchatController implements Initializable {
 	private Signature dsaSignature;
 	private MessageDigest sha512Hash;
 	private Cipher rsaCipher;
+	private boolean isFirst = Boolean.valueOf(context.getProperty("isFirst"));
 
 	@FXML
 	Button privateKey;
@@ -94,7 +94,7 @@ public class TchatController implements Initializable {
 
 		try {
 			sha512Hash = provider.getMessageDigest("SHA-512");
-			dsaSignature = provider.getSignature("DSA");
+			dsaSignature = provider.getSignature("SHA1withRSA");
 			rsaCipher = provider.getCipher("RSA");
 			matrix = provider.getCipher("AES");
 
@@ -111,7 +111,7 @@ public class TchatController implements Initializable {
 		String boiteAlire;
 		String boiteAecrire;
 
-		if (BrokerLauncher.getBokerLauncher().isFirst()) {
+		if (isFirst) {
 			boiteAlire = "boite1";
 			boiteAecrire = "boite2";
 		} else {
@@ -144,7 +144,7 @@ public class TchatController implements Initializable {
 
 		writer.send(writer.createObjectMessage(myPublicKey));
 
-		if (BrokerLauncher.getBokerLauncher().isFirst()) {
+		if (isFirst) {
 			logger.info("Je suis le 1er, je crée la clé secrete");
 			rsaCipher.init(Cipher.ENCRYPT_MODE, otherPublicKey);
 			sessionKey = provider.getKeyGenerator("AES").generateKey();

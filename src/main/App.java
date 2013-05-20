@@ -4,6 +4,7 @@ package main;
 //import java.util.logging.Logger;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.esiag.isidis.bdf.commons.initializer.springconf.BdfApplicationContext;
 import org.esiag.isidis.bdf.commons.initializer.utils.SpringUtils;
 import org.esiag.isidis.bdf.commons.jms.BrokerLauncher;
 
@@ -31,8 +32,13 @@ public class App extends Application {
         try {
         	
         	SpringUtils.initBdfContext("application-context.xml","jms_messages.properties");
-        	BrokerLauncher.getBokerLauncher();
-            
+        	BdfApplicationContext context = BdfApplicationContext.getInstance();
+        	
+        	if(Boolean.valueOf(context.getProperty("isFirst"))){
+        		logger.info("Demarrage du Broker JMS");
+        		BrokerLauncher.getBokerLauncher();
+        	}
+        	
             AnchorPane page = (AnchorPane) FXMLLoader.load(App.class.getResource("IssueTrackingLite.fxml"));
             Scene scene = new Scene(page);
             primaryStage.setScene(scene);
