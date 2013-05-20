@@ -8,9 +8,12 @@ import java.io.Serializable;
 import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
@@ -55,14 +58,16 @@ public class TchatController implements Initializable {
 	private MessageConfiguration confWriter;
 	private static BdfApplicationContext context = BdfApplicationContext
 			.getInstance();
-	private MyProvider provider = new MyProvider();
-	private Cipher matrix;
 	private Key myPublicKey;
 	private Key myPrivateKey;
-
 	private Key otherPublicKey;
-
 	private SecretKey sessionKey;
+
+	private MyProvider provider = new MyProvider();
+	private Cipher matrix;
+	private Signature dsaSignature;
+	private MessageDigest sha512Hash;
+	private Cipher rsaCipher;
 
 	@FXML
 	Button privateKey;
@@ -83,8 +88,20 @@ public class TchatController implements Initializable {
 		logger.addAppender(new GuiAppender(MainController.console));
 		logger.info(this.getClass().getSimpleName() + ".initialize");
 
-		if (!init){
+		if (!init) {
 			initJMS();
+		}
+
+		try {
+			sha512Hash = provider.getMessageDigest("SHA-512");
+			dsaSignature = provider.getSignature("DSA");
+			rsaCipher = provider.getCipher("RSA");
+			matrix = provider.getCipher("AES");
+
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -106,8 +123,8 @@ public class TchatController implements Initializable {
 		confReader.setMode(ConnexionMode.QUEUE);
 
 		try {
-			new Reader(context.getProperty("jmsBrokerConfig.ip"),
-					confReader, null);
+			new Reader(context.getProperty("jmsBrokerConfig.ip"), confReader,
+					null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -124,26 +141,46 @@ public class TchatController implements Initializable {
 			InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 
 		logger.info("init !!");
-		Cipher cipher = provider.getCipher("RSA");
+
 		writer.send(writer.createObjectMessage(myPublicKey));
 
 		if (BrokerLauncher.getBokerLauncher().isFirst()) {
 			logger.info("Je suis le 1er, je crée la clé secrete");
-			cipher.init(Cipher.ENCRYPT_MODE, otherPublicKey);
+			rsaCipher.init(Cipher.ENCRYPT_MODE, otherPublicKey);
 			sessionKey = provider.getKeyGenerator("AES").generateKey();
-			cipher.update(sessionKey.getEncoded());
-			byte[] keyChiphed = cipher.doFinal();
-			
-			byte[] signature = getSignature(keyChiphed);
-			
+			rsaCipher.update(sessionKey.getEncoded());
+			byte[] keyChiphed = rsaCipher.doFinal();
+
+			byte[] signature = null;
+			try {
+				signature = getSignature(keyChiphed);
+			} catch (SignatureException e) {
+				e.printStackTrace();
+			}
+
 			SecretKeyWrap skw = new SecretKeyWrap(keyChiphed, signature);
 			writer.send(writer.createObjectMessage(skw));
 		}
 	}
 
-	private byte[] getSignature(byte[] keyChiphed) {
-		// TODO Auto-generated method stub
-		return null;
+	private byte[] getSignature(byte[] keyChiphed) throws InvalidKeyException,
+			SignatureException {
+
+		byte[] ash = sha512Hash.digest(keyChiphed);
+		dsaSignature.initSign((PrivateKey) myPrivateKey);
+		dsaSignature.update(ash);
+		byte[] sig = dsaSignature.sign();
+		return sig;
+	}
+
+	private boolean validSignature(byte[] signature, byte[] datas)
+			throws InvalidKeyException, SignatureException {
+
+		byte[] ash = sha512Hash.digest(datas);
+		dsaSignature.initVerify((PublicKey) otherPublicKey);
+		dsaSignature.update(ash);
+		boolean value = dsaSignature.verify(signature);
+		return value;
 	}
 
 	public void getPrivateKey(ActionEvent event) throws IOException,
@@ -174,7 +211,7 @@ public class TchatController implements Initializable {
 		logger.info("get public key !!");
 		FileChooser fileChooser = new FileChooser();
 		File publicKeyFile = fileChooser.showOpenDialog(null);
-		
+
 		FileInputStream fis = new FileInputStream(publicKeyFile);
 		ObjectInputStream ois = new ObjectInputStream(fis);
 		Object obj = ois.readObject();
@@ -195,9 +232,6 @@ public class TchatController implements Initializable {
 			throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 		if (sessionKey != null) {
-			if (matrix == null) {
-				matrix = provider.getCipher("AES");
-			}
 			matrix.init(mode, sessionKey);
 			return new String(matrix.doFinal(data.getBytes()));
 		}
@@ -254,23 +288,26 @@ public class TchatController implements Initializable {
 					} else if (object instanceof SecretKeyWrap) {
 						SecretKeyWrap skw = (SecretKeyWrap) object;
 
-						Cipher cipher = provider.getCipher("RSA");
-						cipher.init(Cipher.DECRYPT_MODE, myPrivateKey);
+						boolean isValid = validSignature(
+								skw.getSignatureHashCipherKeySession(),
+								skw.getData());
 
-						cipher.update(skw.getData());
+						if (isValid) {
 
-						byte[] clearKey = cipher.doFinal();
-						
-						boolean isValid = checkSignature();
-						
-						if(isValid){
-						SecretKeyWrap data = new SecretKeyWrap(clearKey, null);
+							rsaCipher.init(Cipher.DECRYPT_MODE, myPrivateKey);
 
-						sessionKey = new SecretKeySpec(data.getData(), 0,
-								data.getData().length, "AES");
+							rsaCipher.update(skw.getData());
 
-						logger.info("J'ai reçu la clé de session !");
-						}else{
+							byte[] clearKey = rsaCipher.doFinal();
+
+							SecretKeyWrap data = new SecretKeyWrap(clearKey,
+									null);
+
+							sessionKey = new SecretKeySpec(data.getData(), 0,
+									data.getData().length, "AES");
+
+							logger.info("J'ai reçu la clé de session !");
+						} else {
 							logger.info("La signature ne correspond pas à celle du destinataire !");
 						}
 					}
@@ -281,10 +318,6 @@ public class TchatController implements Initializable {
 			}
 		}
 
-		private boolean checkSignature() {
-			// TODO Auto-generated method stub
-			return false;
-		}
 	}
 
 	private class Writer extends AbstractWriter {

@@ -11,11 +11,11 @@ public class SecretKeyWrap implements Serializable{
 	private static final long serialVersionUID = 3095841066035677548L;
 
 	private byte[] data;
-	private byte[] hashCipherKeySession;
+	private byte[] signatureHashCipherKeySession;
 	
-	public SecretKeyWrap(byte[] cryptedData, byte[] hashCipherKeySession){
+	public SecretKeyWrap(byte[] cryptedData, byte[] signatureHashCipherKeySession){
 		this.data = cryptedData;
-		this.hashCipherKeySession = hashCipherKeySession;
+		this.signatureHashCipherKeySession = signatureHashCipherKeySession;
 	}
 
 	public byte[] getData() {
@@ -26,11 +26,11 @@ public class SecretKeyWrap implements Serializable{
 		this.data = data;
 	}
 
-	public byte[] getHashCipherKeySession() {
-		return hashCipherKeySession;
+	public byte[] getSignatureHashCipherKeySession() {
+		return signatureHashCipherKeySession;
 	}
 
-	public void setHashCipherKeySession(byte[] hashCipherKeySession) {
-		this.hashCipherKeySession = hashCipherKeySession;
+	public void setSignatureHashCipherKeySession(byte[] hashCipherKeySession) {
+		this.signatureHashCipherKeySession = hashCipherKeySession;
 	}
 }
