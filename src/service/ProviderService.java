@@ -146,16 +146,15 @@ public class ProviderService {
 					String empreinte;
 
 					if (!keccakOrNot)
-						empreinte = new String(md.digest(buff.toString()
-								.getBytes()));
+						empreinte = new String(md.digest(buff.toString().getBytes()));
 					else
-						empreinte = new String(keccak.digest(buff.toString()
-								.getBytes()));
+						empreinte = new String(keccak.digest(buff.toString().getBytes()));
 
-					FileOutputStream fos = new FileOutputStream(new File(
-							cheminEmpreinte));
-
-					fos.write(empreinte.getBytes());
+					FileOutputStream fos = new FileOutputStream(new File(cheminEmpreinte));
+					
+					String e = new BigInteger(1, empreinte.getBytes()).toString(16);
+					
+					fos.write(e.getBytes());
 
 				} catch (NoSuchAlgorithmException e) {
 					logger.error("", e); 
