@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
 import org.apache.log4j.Logger;
+import org.esiag.isidis.bdf.commons.initializer.springconf.BdfApplicationContext;
 
 public class BrokerLauncher implements Runnable {
 
@@ -66,8 +67,8 @@ public class BrokerLauncher implements Runnable {
 			broker = new BrokerService();
 
 			TransportConnector connector = new TransportConnector();
-
-			connector.setUri(new URI("tcp://localhost:61616"));
+			String adress = BdfApplicationContext.getInstance().getProperty("BrokerAdress");
+			connector.setUri(new URI("tcp://"+ adress));
 
 			broker.addConnector(connector);
 
