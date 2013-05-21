@@ -42,9 +42,9 @@
         </AnchorPane>
       </items>
     </SplitPane>
-    <ImageView id="IssueTrackingLite" layoutX="14.0" layoutY="20.0">
+    <ImageView id="IssueTrackingLite" fitHeight="33.0" fitWidth="222.0" layoutX="14.0" layoutY="14.0">
       <image>
-        <Image url="@IssueTrackingLite.png" preserveRatio="true" smooth="true" />
+        <Image url="@header.png" preserveRatio="true" smooth="true" />
       </image>
     </ImageView>
   </children>

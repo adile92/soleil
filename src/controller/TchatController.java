@@ -39,13 +39,11 @@ import org.apache.log4j.Logger;
 import org.esiag.isidis.bdf.commons.initializer.springconf.BdfApplicationContext;
 import org.esiag.isidis.bdf.commons.jms.AbstractReader;
 import org.esiag.isidis.bdf.commons.jms.AbstractWriter;
-import org.esiag.isidis.bdf.commons.jms.BrokerLauncher;
 import org.esiag.isidis.bdf.commons.jms.ConnexionMode;
 import org.esiag.isidis.bdf.commons.jms.MessageConfiguration;
 import org.esiag.isidis.bdf.commons.jms.MessageFilter;
 
 import wrapper.SecretKeyWrap;
-
 import appender.GuiAppender;
 import edu.esiag.isidis.security.provider.MyProvider;
 
@@ -274,8 +272,7 @@ public class TchatController implements Initializable {
 			try {
 				if (message instanceof TextMessage) {
 					String mess = ((TextMessage) message).getText();
-					String clearMessage = decryptOrEncrypt(mess,
-							Cipher.DECRYPT_MODE);
+					String clearMessage = decryptOrEncrypt(mess,Cipher.DECRYPT_MODE);
 
 					tchat.appendText("Other : " + clearMessage);
 					tchat.appendText("[ " + mess + " ]\n");
