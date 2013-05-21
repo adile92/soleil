@@ -3,22 +3,22 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="at.bestsolution.efxclipse.tooling.jdt.core.JAVAFX_CONTAINER"/>
-	<classpathentry kind="lib" path="jfxrt.jar"/>
-	<classpathentry kind="lib" path="log4j-1.2.17.jar"/>
-	<classpathentry kind="lib" path="javafx-dialogs-0.0.1.jar"/>
-	<classpathentry kind="lib" path="activemq-core-5.7.0.jar"/>
-	<classpathentry kind="lib" path="spring-core-3.0.7.RELEASE.jar"/>
-	<classpathentry kind="lib" path="spring-beans-3.0.7.RELEASE.jar"/>
-	<classpathentry kind="lib" path="spring-context-3.0.7.RELEASE.jar"/>
-	<classpathentry kind="lib" path="slf4j-api-1.7.2.jar"/>
-	<classpathentry kind="lib" path="slf4j-log4j12-1.7.2.jar"/>
-	<classpathentry kind="lib" path="xbean-spring-3.12.jar"/>
-	<classpathentry kind="lib" path="commons-logging-1.0.3.jar"/>
-	<classpathentry kind="lib" path="spring-asm-3.0.7.RELEASE.jar"/>
-	<classpathentry kind="lib" path="geronimo-jms_1.1_spec-1.1.1.jar"/>
-	<classpathentry kind="lib" path="geronimo-j2ee-management_1.1_spec-1.0.1.jar"/>
-	<classpathentry kind="lib" path="spring-expression-3.0.7.RELEASE.jar"/>
-	<classpathentry kind="lib" path="kahadb-5.7.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/lune"/>
+	<classpathentry kind="lib" path="lib/activemq-core-5.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/geronimo-j2ee-management_1.1_spec-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/geronimo-jms_1.1_spec-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/javafx-dialogs-0.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jfxrt.jar"/>
+	<classpathentry kind="lib" path="lib/kahadb-5.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/spring-asm-3.0.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-beans-3.0.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-context-3.0.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-core-3.0.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-expression-3.0.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/xbean-spring-3.12.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
