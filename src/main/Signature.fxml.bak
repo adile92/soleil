@@ -37,7 +37,7 @@
             <Label id="dataPath" fx:id="keyPath" layoutX="14.0" layoutY="153.0" prefHeight="23.0" prefWidth="344.0" />
             <Button fx:id="btnValidate" layoutX="231.0" layoutY="207.0" mnemonicParsing="false" onAction="#btnValidate" text="Valider" />
             <ToggleButton fx:id="choixActionVerifier" layoutX="280.0" layoutY="21.0" mnemonicParsing="false" onAction="#newChoixAction" text="Vérifier" />
-            <Button id="fileChooserDataSign" fx:id="fileChooserDataSign" layoutX="372.0" layoutY="182.0" mnemonicParsing="false" onAction="#newMdFileChooser" prefWidth="202.0" text="Choisir un fichier signé" />
+            <Button fx:id="fileChooserDataSign" layoutX="372.0" layoutY="182.0" mnemonicParsing="false" onAction="#newMdFileChooser" prefWidth="202.0" text="Choisir une signature" />
             <Label id="dataPath" fx:id="signPath" layoutX="14.0" layoutY="182.0" prefHeight="23.0" prefWidth="344.0" />
           </children>
         </AnchorPane>

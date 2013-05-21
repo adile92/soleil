@@ -18,7 +18,7 @@
             <Button id="" fx:id="generateKey" layoutX="239.0" layoutY="127.0" mnemonicParsing="false" onAction="#generateKey" text="Générer" />
             <Label layoutX="35.0" layoutY="176.0" prefWidth="104.99990000000253" text="Fichier de sortie :" />
             <TextArea fx:id="empreinteArea" layoutX="22.0" layoutY="286.0" prefHeight="108.0" prefWidth="526.0" wrapText="true" />
-            <Label fx:id="fichierSortie" alignment="TOP_LEFT" layoutX="146.0" layoutY="179.0" prefHeight="84.0" prefWidth="402.0" text="..." />
+            <Label fx:id="fichierSortie" alignment="TOP_LEFT" layoutX="126.0" layoutY="179.0" prefHeight="84.0" prefWidth="422.0" text="..." />
             <ChoiceBox fx:id="algoList" layoutX="125.0" layoutY="58.0" prefWidth="135.0">
               <items>
                 <FXCollections fx:factory="observableArrayList">
@@ -54,7 +54,7 @@
               </items>
             </ChoiceBox>
             <Label fx:id="lbCertifAlgo" layoutX="345.0" layoutY="91.0" text="Algorithme :" />
-            <ChoiceBox id="boxDuree" fx:id="certificateLonger" layoutX="270.0" layoutY="88.0" prefWidth="41.0">
+            <ChoiceBox id="boxDuree" fx:id="certificateLonger" layoutX="270.0" layoutY="88.0" prefWidth="58.0">
               <items>
                 <FXCollections fx:factory="observableArrayList">
                   <String fx:value="Item 1" />

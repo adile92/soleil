@@ -16,17 +16,17 @@
         <AnchorPane id="anchorPane3" fx:id="panMessageDigest" prefHeight="306.0" prefWidth="573.0">
           <children>
             <Label fx:id="labelStatus" layoutX="15.0" layoutY="72.0" text="Chiffrement :" />
-            <Button fx:id="fileChooser" layoutX="407.0" layoutY="115.0" mnemonicParsing="false" onAction="#newCipherFileChooser" text="Choisir un fichier" />
+            <Button fx:id="fileChooser" layoutX="415.0" layoutY="119.0" mnemonicParsing="false" onAction="#newCipherFileChooser" text="Choisir un fichier" />
             <Label layoutX="15.0" layoutY="206.0" text="Fichier de sortie :" />
-            <ProgressBar fx:id="progress" layoutX="106.0" layoutY="76.0" prefWidth="200.0" progress="0.0" />
-            <TextField fx:id="fichierSortie" layoutX="120.0" layoutY="204.0" prefWidth="421.0" />
-            <Button layoutX="407.0" layoutY="158.0" mnemonicParsing="false" onAction="#newCipherKeyFileChooser" prefWidth="126.0" text="Choisir une clé" />
+            <ProgressBar fx:id="progress" layoutX="134.0" layoutY="76.0" prefWidth="406.9999000000025" progress="0.0" />
+            <TextField fx:id="fichierSortie" layoutX="134.0" layoutY="204.0" prefWidth="407.0" />
+            <Button layoutX="415.0" layoutY="154.0" mnemonicParsing="false" onAction="#newCipherKeyFileChooser" prefWidth="126.0" text="Choisir une clé" />
             <Label fx:id="labelFichier" layoutX="14.0" layoutY="120.0" text="Fichier à chiffrer :" />
             <Label id="cleChiffrement" layoutX="15.0" layoutY="158.0" text="Clé  :" />
             <TextField fx:id="cleChiffrement" layoutX="134.0" layoutY="154.0" prefWidth="249.0" />
-            <Button fx:id="chiffrer" layoutX="237.0" layoutY="262.0" mnemonicParsing="false" onAction="#newCipherCrypt" text="Chiffrer" />
+            <Button fx:id="chiffrer" layoutX="242.0" layoutY="262.0" mnemonicParsing="false" onAction="#newCipherCrypt" text="Chiffrer" />
             <TextField fx:id="fileChiffrement" layoutX="134.0" layoutY="119.0" prefWidth="249.0" />
-            <ToggleButton fx:id="choixAction" layoutX="220.0" layoutY="21.0" mnemonicParsing="false" onAction="#newChoixAction" text="Déchiffrer" />
+            <ToggleButton fx:id="choixAction" layoutX="234.0" layoutY="21.0" mnemonicParsing="false" onAction="#newChoixAction" text="Déchiffrer" />
             <Label fx:id="labelMode" layoutX="15.0" layoutY="26.0" text="Mode actuel : chiffrement" />
           </children>
         </AnchorPane>
